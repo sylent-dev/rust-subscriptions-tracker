@@ -69,7 +69,7 @@ jobs:
         run: |
           directory="$NAME-$VERSION-${{ matrix.target }}"
           mkdir "$directory"
-          cp README.md LICENSE-APACHE LICENSE-MIT "$directory/"
+          cp README.md LICENSE-MIT "$directory/"
           if [ "${{ runner.os }}" = "Windows" ]; then
             cp "target/${{ matrix.target }}/release/$NAME.exe" "$directory/"
             7z a "$directory.zip" "$directory"

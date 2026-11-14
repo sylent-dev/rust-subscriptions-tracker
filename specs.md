@@ -25,6 +25,8 @@ Remove or add sections as needed.
 
 <!-- Look and feel, tone of the messages, use of colors. -->
 
+- **Code that can be rewritten by hand**: the owner will rebuild the application later as a Rust exercise, and show it to learners. The code favors what can be followed from top to bottom over the most compact form: few dependencies, short modules with one clear role each, and comments that explain why rather than what.
+
 ## Command-line conventions
 
 <!-- The answers to process.md, Command-line conventions: stdout and stderr, plain output when piped, --color and NO_COLOR, --help and --version, completions. Only what departs from the usual, or a choice to make. -->
