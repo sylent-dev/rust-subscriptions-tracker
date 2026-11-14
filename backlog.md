@@ -20,9 +20,13 @@ One entry per item, in the section of its kind: what it is in one sentence, what
 
 <!-- New commands, options, outputs or screens for a later cycle. -->
 
+- macOS support: its own scheduler (launchd) and desktop notifications, and its archives in the Release workflow. Waits on: a Mac to test the reminders. Noted on 2026-11-14.
+
 ## Large works
 
 <!-- Works of several cycles, or that change the structure. -->
+
+- Exercise material for learners: a guide to rebuild the application by hand, module by module, in the order to write them, with what each one teaches (a topic that speaks to everyone: their own money). Waits on: the first release. Noted on 2026-11-14.
 
 ## Waiting on others
 

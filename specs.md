@@ -21,6 +21,8 @@ Remove or add sections as needed.
 
 <!-- What isn't a feature but must hold: the target systems, the smallest terminal supported (e.g. 80 × 24), the speed on a given volume, the size of the executable. Only what matters for this application. -->
 
+- **Code that can be rewritten by hand**: the owner will rebuild the application later as a Rust exercise, and show it to learners. The code favors what can be followed from top to bottom over the most compact form: few dependencies, short modules with one clear role each, and comments that explain why rather than what.
+
 ## Design principles
 
 <!-- Look and feel, tone of the messages, use of colors. -->

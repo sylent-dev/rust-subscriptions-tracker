@@ -1,13 +1,19 @@
 [package]
-name = "rust-project-template"
+name = "rust-subscriptions-tracker"
 version = "0.1.0"
 edition = "2024"
 rust-version = "1.93"
-description = "Template for Rust applications (command-line, desktop or web)."
+description = "Track your subscriptions and get a desktop notification before each cancellation deadline."
 authors = ["Aunim HASSAN"]
-license = "MIT OR Apache-2.0"
-repository = "https://github.com/sylent-dev/rust-cli-template"
+license = "MIT"
+repository = "https://github.com/sylent-dev/rust-subscriptions-tracker"
 readme = "README.md"
+
+# The executable, named without the `rust-` prefix of the repository: its name is also the one
+# the reminder scheduler runs, and it names the release archives (`release.yml`).
+[[bin]]
+name = "subscriptions-tracker"
+path = "src/main.rs"
 
 [dependencies]
 
