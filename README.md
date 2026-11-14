@@ -1,6 +1,6 @@
 # rust-subscriptions-tracker
 
-A small terminal application, with menus in the terminal like [rust-repositories-cleaner](https://github.com/sylent-dev/rust-repositories-cleaner), that keeps the list of your subscriptions in a local file and sends a desktop notification before each cancellation deadline, so that no subscription renews at full price because the date was missed.
+A small desktop application, with a window like [Exile Market](https://github.com/sylent-dev/rust-exile-market), that keeps the list of your subscriptions in a local file and sends a desktop notification before each cancellation deadline, so that no subscription renews at full price because the date was missed.
 
 - **Local only**: the data stays in a file on your disk, with no server and no online account.
 - **Reminders without thinking about it**: the system runs the check every day (a systemd user timer on Linux, the Task Scheduler on Windows), and catches up at the next boot if the computer was off.
