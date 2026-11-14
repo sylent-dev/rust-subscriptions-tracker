@@ -28,6 +28,8 @@ One entry per item, in the section of its kind: what it is in one sentence, what
 
 - Exercise material for learners: a guide to rebuild the application by hand, module by module, in the order to write them, with what each one teaches (a topic that speaks to everyone: their own money). Waits on: the first release. Noted on 2026-11-14.
 
+- At the retrospective of the first cycle, discuss with the owner whether another template comes out of this project (a desktop application with a headless mode run daily by the system scheduler), the owner making templates after the fact. Waits on: the retrospective of cycle 1. Noted on 2026-11-14.
+
 ## Waiting on others
 
 <!-- What depends on someone else than the owner and Claude Code; say on whom and on what. -->
