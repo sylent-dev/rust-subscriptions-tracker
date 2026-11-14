@@ -20,7 +20,7 @@ One entry per item, in the section of its kind: what it is in one sentence, what
 
 <!-- New commands, options, outputs or screens for a later cycle. -->
 
-- Windows and macOS support: their own scheduler and desktop notifications instead of the systemd timer and the Linux notifications. Waits on: a Windows or macOS machine to test the reminders. Noted on 2026-11-14.
+- macOS support: its own scheduler (launchd) and desktop notifications, and its archives in the Release workflow. Waits on: a Mac to test the reminders. Noted on 2026-11-14.
 
 ## Large works
 

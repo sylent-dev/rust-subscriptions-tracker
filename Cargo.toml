@@ -9,6 +9,12 @@ license = "MIT"
 repository = "https://github.com/sylent-dev/rust-subscriptions-tracker"
 readme = "README.md"
 
+# The executable, named without the `rust-` prefix of the repository: its name is also the one
+# the reminder scheduler runs, and it names the release archives (`release.yml`).
+[[bin]]
+name = "subscriptions-tracker"
+path = "src/main.rs"
+
 [dependencies]
 
 [lints.rust]

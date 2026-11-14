@@ -3,15 +3,15 @@
 A small terminal application, with menus in the terminal like [rust-repositories-cleaner](https://github.com/sylent-dev/rust-repositories-cleaner), that keeps the list of your subscriptions in a local file and sends a desktop notification before each cancellation deadline, so that no subscription renews at full price because the date was missed.
 
 - **Local only**: the data stays in a file on your disk, with no server and no online account.
-- **Reminders without thinking about it**: a systemd user timer runs the check every day, and catches up at the next boot if the computer was off.
-- **Linux only** for now.
+- **Reminders without thinking about it**: the system runs the check every day (a systemd user timer on Linux, the Task Scheduler on Windows), and catches up at the next boot if the computer was off.
+- **Linux and Windows**.
 - **English and French** interface.
 
 What the tool does is described in [specs.md](specs.md), and its progress in [roadmap.md](roadmap.md). The project follows [process.md](process.md), from [rust-cli-template](https://github.com/sylent-dev/rust-cli-template).
 
 ## Requirements
 
-- Linux with systemd (for the reminders) and a desktop that shows notifications
+- Linux with systemd, or Windows, and a desktop that shows notifications
 - Rust 1.93 or later (stable toolchain, see `rust-toolchain.toml`), to build it from source
 
 ## Build

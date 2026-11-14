@@ -4,7 +4,7 @@ The steps chosen for the application described in [specs.md](specs.md), followin
 
 ## Size of the project
 
-A terminal interface, like rust-repositories-cleaner: menus and screens with `ratatui`, plus the daily check run by a systemd timer, which shows no screen. Every tool, in order, for the first cycle: specifications, structure, wireframes, mock-up, design system, build, release, retrospective. Linux only; English and French interface. Chosen on 2026-11-14.
+A terminal interface, like rust-repositories-cleaner: menus and screens with `ratatui`, plus the daily check run by a systemd timer, which shows no screen. Every tool, in order, for the first cycle: specifications, structure, wireframes, mock-up, design system, build, release, retrospective. Linux and Windows (macOS in the backlog), so that the tool can be downloaded from the owner's portfolio; English and French interface. Chosen on 2026-11-14.
 
 ## Reference
 

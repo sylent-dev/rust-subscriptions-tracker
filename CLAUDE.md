@@ -127,5 +127,5 @@ Follow [Conventional Commits 1.0.0](https://www.conventionalcommits.org/en/v1.0.
 
 ## Releases
 
-- Pushing a version tag (e.g. `v0.1.0`) that matches the version of `Cargo.toml` publishes a GitHub release with the executables for Windows, macOS and Linux (`.github/workflows/release.yml`).
+- Pushing a version tag (e.g. `v0.1.0`) that matches the version of `Cargo.toml` publishes a GitHub release with the executables for Linux and Windows (`.github/workflows/release.yml`); macOS waits in `backlog.md`.
 - The template is made for command-line and terminal applications, which this workflow suits: an archive per system with the executable.
