@@ -70,12 +70,12 @@
       <rect x="220" y="166" width="62" height="34" fill="#0F161C" stroke="#1B2630"/>
       <rect x="220" y="166" width="2" height="34" fill="#3DDC84"/>
       <text x="252" y="181" text-anchor="middle" font-size="9" font-weight="700" fill="#E7EDF3">Structure</text>
-      <text x="252" y="192" text-anchor="middle" font-size="7" fill="#8B9AA7">commands tree</text>
+      <text x="252" y="192" text-anchor="middle" font-size="7" fill="#8B9AA7">windows, panels</text>
 
       <rect x="154" y="204" width="62" height="34" fill="#0F161C" stroke="#1B2630"/>
       <rect x="154" y="204" width="2" height="34" fill="#3DDC84"/>
       <text x="186" y="219" text-anchor="middle" font-size="9" font-weight="700" fill="#E7EDF3">Wireframes</text>
-      <text x="186" y="230" text-anchor="middle" font-size="7" fill="#8B9AA7">TUI screens</text>
+      <text x="186" y="230" text-anchor="middle" font-size="7" fill="#8B9AA7">every window</text>
 
       <rect x="220" y="204" width="62" height="34" fill="#0F161C" stroke="#1B2630"/>
       <rect x="220" y="204" width="2" height="34" fill="#3DDC84"/>
@@ -135,16 +135,16 @@
     <rect x="304" y="146" width="2" height="140" fill="#3DDC84"/>
     <g font-family="'Source Code Pro', ui-monospace, monospace" font-size="7" fill="#3DDC84">
       <text x="312" y="160">SIZE THE CHANGE</text>
-      <text x="312" y="178">A MESSAGE, A FIX</text>
-      <text x="312" y="200">AN OPTION</text>
-      <text x="312" y="222">A COMMAND</text>
-      <text x="312" y="244">A SCREEN OF A TUI</text>
-      <text x="312" y="266">A NEW TOOL</text>
+      <text x="312" y="178">A FIX, A LIBRARY</text>
+      <text x="312" y="200">A HIDDEN BEHAVIOR</text>
+      <text x="312" y="222">A VISIBLE TOUCH</text>
+      <text x="312" y="244">A NEW WINDOW</text>
+      <text x="312" y="266">A NEW APPLICATION</text>
     </g>
     <g font-size="7.5" fill="#8B9AA7">
       <text x="312" y="188">build</text>
       <text x="312" y="210">specs, then build</text>
-      <text x="312" y="232">specs, structure, build</text>
+      <text x="312" y="232">mock-up, then build</text>
       <text x="312" y="254">wireframe, mock-up, build</text>
       <text x="312" y="276">every tool, in order</text>
     </g>

@@ -11,8 +11,9 @@ Only the layout is decided here: the style (colors, fonts) comes after, in the H
 
 ## 1. Before drawing
 
-- Read `specs.md` (what the interface shows) and ask the owner what is unclear, a few questions at a time: the screens or windows, the sizes (window width, phone, desktop), what matters most at a glance, the panels that open over the content.
-- For a responsive interface, start with the **narrowest layout** (mobile first): it forces to choose the essential, and the wider layouts only rearrange the same blocks.
+- Read `specs.md` (what the interface shows) and ask the owner what is unclear, a few questions at a time: the windows and their panels, their sizes in logical pixels (the smallest, the default, the owner's), whether a window can be resized, what matters most at a glance, the panels that open over the content.
+- **Decide the title bar in the first wireframes**: the one of the system (the template's default), drawn as a plain band, or one of the application's own, with its buttons (close, minimize, move) drawn from the start.
+- For a resizable window, start with the **smallest size**: it forces to choose the essential, and the larger sizes only rearrange the same blocks.
 
 ## 2. Generate the file
 
@@ -49,7 +50,7 @@ The best results came from this loop: **the owner draws, Claude Code rearranges 
 
 ## 6. Structures
 
-The same file format serves to sort and organize, not only to lay out screens: the commands of a tool and their options, the screens of a terminal interface and how one leads to the other, the tree of the contents of a site. Moving cards by hand makes an abstract structure concrete; the owner loved it on sylent.art.
+The same file format serves to sort and organize, not only to lay out screens: the windows of an application and how one leads to the other, its panels, the groups of its settings, the tree of the contents of a site. Moving cards by hand makes an abstract structure concrete; the owner loved it on sylent.art.
 
 - One card per item (one group: its box and its label), the current state on the left, **two leads** side by side, a parking area for the items not placed yet, and the open questions in a corner.
 - Draw it during the specifications, **before the wireframes**: on sylent.art, the tree of the contents came after the build, and the addresses changed twice.
