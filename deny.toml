@@ -1,0 +1,54 @@
+# The security advisories and the licenses of the dependencies of the application, on every
+# system it is released for: `cargo deny check advisories licenses`, run by the Release workflow,
+# and the advisories every day by the Advisories workflow. Each license of code listed here is
+# compatible with GPL-3.0-or-later, the license of the application; a font (OFL-1.1,
+# Ubuntu-font-1.0) stays a work apart, shipped under its own license with its notice. Check the
+# list again when that license changes, and keep `accepted` of about.toml the same. macOS joins the targets with its release
+# (backlog.md).
+
+[graph]
+targets = [
+    "x86_64-unknown-linux-gnu",
+    "x86_64-pc-windows-msvc",
+]
+exclude-dev = true
+
+[advisories]
+# A version withdrawn by its authors is updated.
+yanked = "deny"
+# A crate unsound without `unsafe` fails the check wherever it is in the tree, not only among
+# the direct dependencies (the default).
+unsound = "all"
+# The advisories that don't concern the application, each with its reason; remove an entry once
+# its crate is gone from Cargo.lock.
+ignore = [
+    # Not flaws: the three crates were merged into zbus 6, and stay here, on Linux only, through
+    # the screen reader support of eframe (accesskit_unix, still on zbus 5). They talk to the
+    # D-Bus session of the user, never to the network. To remove with the update of eframe
+    # that brings zbus 6.
+    { id = "RUSTSEC-2026-0370", reason = "zvariant merged into zbus 6; waits for accesskit_unix" },
+    { id = "RUSTSEC-2026-0371", reason = "zbus_names merged into zbus 6; waits for accesskit_unix" },
+    { id = "RUSTSEC-2026-0372", reason = "zvariant_derive merged into zbus 6; waits for accesskit_unix" },
+]
+
+[licenses]
+confidence-threshold = 0.93
+allow = [
+    "Apache-2.0",
+    "Apache-2.0 WITH LLVM-exception",
+    "BSD-2-Clause",
+    "BSD-3-Clause",
+    "BSL-1.0",
+    "ISC",
+    "MIT",
+    "MPL-2.0",
+    # The fonts of egui (`default_fonts` of eframe), until the application embeds its own.
+    "OFL-1.1",
+    "Ubuntu-font-1.0",
+    "Unicode-3.0",
+    "Zlib",
+]
+
+# The crates of this workspace, never published: their license is the one of the project.
+[licenses.private]
+ignore = true

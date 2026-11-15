@@ -9,19 +9,28 @@ Goal: choose the style with real content, every scenario and every state, before
 
 ## 1. Build the page
 
+Before drawing the options of a design question:
+
+- **Ask the owner for their own idea first**, or draw it alongside: theirs beat the three entries drawn for a bug report (an icon in the title bar rather than a link or a row in the settings).
+- **Look at the real data** the window will show: the 771 items of a list had only 639 images (several shared one icon), which ruled out an icon alone before any option was drawn.
+
 Start from `assets/mockup-template.html` (read its comments), copied to `docs/mockups/<name>.html`:
 
-- **One self-contained page**: the CSS and the JavaScript inline, only the fonts and the images of `assets/` outside.
-- **Every frame of the wireframe becomes a window**, at its real size, with sample data close to real ones (long names, large numbers, the other language). Add every scenario and state in `SECTIONS`: empty, loading, waiting, each error, each kind of content. **A new section goes at the top** of `SECTIONS`, so that the owner finds it at once; past ten sections, the page shows a table of contents under its header, one link per section.
+- **Small files**, so that a change reads only what it needs: the page `docs/mockups/<name>.html` only loads, in order, the files of `docs/mockups/<name>/`: `css/` (the fonts, the tokens, the page, then one sheet per block of the interface), `js/` (the shared helpers and icons, one script per block, the sample data, the rendering last) and `sections/` (one script per section, each adding its windows to `SECTIONS`). Plain `<link>` and `<script>` tags, no modules, so that the files share their constants. The template is one file: split it as soon as the page has more than a few blocks.
+- **Every frame of the wireframe becomes a window**, at its real size in logical pixels and with its title bar, with sample data close to real ones (long names, large numbers, the other language). Add every scenario and state in `SECTIONS`: empty, loading, waiting, each error, each kind of content. **A new section goes at the top** of `SECTIONS`, so that the owner finds it at once; past ten sections, the page shows a table of contents under its header, one link per section.
 - **3 or 4 styles on the same page**, switched with the tabs at the top; the address keeps the choice (`?theme=…`) to share it. Each style only sets **tokens** (CSS variables under `:root[data-theme="…"]`): fonts, colors, radius, spacing. The components use nothing else, so that a style is cheap to add or tweak.
 - The styles explore **new directions** for this application, its users and its subject, from sober to spectacular: the owner decides by seeing, and a variant set aside is not wasted. If the project has a `design-journal.md`, it records past experiences: it may inspire one style, never all of them, and nothing in it is a default.
+- **Only what egui draws well**: flat fills, strokes, rounded corners, shadows, the fonts and images the application embeds, simple motions (a hover, a fade, a size that changes over time). An effect of the browser that egui lacks (a blur behind a panel, a gradient on a text, a complex transition) would be approved and then never built.
 - **Fonts the application can embed** (e.g. SIL Open Font License, from Google Fonts), preloaded with `font-display: block`, so that the page and its screenshots only finish loading once the fonts are there.
 - **Icons as SVG lines** in the text color, not text symbols (⚙, ⌕, ✓), which render small and off-center.
+- **Every notice is drawn with its way out**: how it closes, for how long, what brings it back. A notice the user can't dismiss stays for as long as they ignore it: a dot on an icon and a line in the settings, left until the user updates, gave way to a bubble that closes for good and a discreet link where the version is written.
+- **A motion is chosen by clicking it**, not by reading about it: draw each variant as a window that plays it on a click (180 ms with an overshoot, 220 ms smooth, 140 ms quick settled a sliding pill in one look), then write the duration and its curve in `specs.md` and the tokens.
 
 Pitfalls met before:
 
 - A class shared by two components (`top`, `online`) silently broke the layout twice: prefix the classes of the application (`app-`) and of the states (`is-`).
 - A JavaScript function named like a browser global (`top`, `name`, `status`) breaks the page: give the components specific names.
+- A `url()` in a style sheet is relative to the sheet, not to the page: from `docs/mockups/<name>/css/`, `assets/` is `../../../../assets/`.
 
 ## 2. Show it
 
@@ -33,9 +42,9 @@ python3 docs/mockups/serve.py <port>
 
 Each time the mock-up changes, check that the page answers with the change, then give the owner `http://127.0.0.1:<port>/docs/mockups/<name>.html` with the section to look at; they reload after each change. If the page answers 404, check which project answers on the port before restarting.
 
-Before asking for a review, check each change with a headless screenshot (`scripts/screenshot.sh <url> <output.png> [width] [height | full]`), kept in the scratchpad, and look at it. To compare the styles at a glance, export one large PNG per style to `outputs/`.
+Before asking for a review, check each change with a headless screenshot (`scripts/screenshot.sh <url> <output.png> [width] [height | full] [selector]`), kept in the scratchpad, and look at it, then delete it: the screenshots are for this check only, the owner looks at the mock-up itself. Capture only the window concerned, with a selector (`'#section-1 .page-slot:nth-child(4)'`), rather than the whole page. **Look at a resizable window at its default width and at the owner's** (ask it once, and note it in `docs/technical-choices.md`): a sentence on three lines in the owner's wider window took four at the default width. To compare the styles at a glance, export one large PNG per style to `outputs/`, deleted once the style is chosen.
 
-The script uses **Playwright** and its own Chromium when installed, otherwise Firefox (normal or Flatpak). Prefer Playwright: it waits for the scripts to settle, captures the whole page (`full`), prints the errors of the browser console (scripts, missing files) and fails on them, which a screenshot alone doesn't show. It is also the only choice when Claude Code runs in a sandbox that doesn't see the browsers of the system, such as VS Code installed as a Flatpak. It checks the mock-up page only, whatever the kind of application. Install it once, outside the projects (about 150 MB):
+The script uses **Playwright** and its own Chromium when installed, otherwise Firefox (normal or Flatpak). Prefer Playwright: its Chromium is closer to the one of VS Code where the owner looks at the mock-up (Firefox draws the fonts a few pixels wider or narrower); it waits for the scripts to settle and prints the errors of the browser console (scripts, missing files) and fails on them; with a selector it captures that window only and lists its texts cut (wider than their box) or wrapped (on more lines than written), with their widths, the measures a screenshot doesn't give; `full` captures the whole page; `SCALE=1.5` takes the scale of a screen other than 100 %. It is also the only choice when Claude Code runs in a sandbox that doesn't see the browsers of the system, such as VS Code installed as a Flatpak. It checks the mock-up page only, whatever the kind of application. Install it once, outside the projects (about 150 MB):
 
 ```sh
 mkdir -p ~/.local/share/mockup-tools && cd ~/.local/share/mockup-tools
@@ -57,8 +66,8 @@ npm init -y && npm install playwright && npx playwright install chromium
    - **An important element is shown alone and in real conditions**, with what surrounds it behind, both following the controls.
    - **Number the proposals once**, from 1 upward across every series: letters, or a numbering that starts again in each series, get mixed up ("the B" of which series?).
 3. **Pixel alignments are tuned by eye on the owner's real screen**, with a tab of offsets (0, 0.5, 1, 1.5 px): the display scale of headless screenshots differs, so they only give the direction. Align icons on the lowercase letters next to them, not on the box of the text.
-4. When the owner points at something, change only that, and say what changed.
-5. From then on, **the mock-up is the reference** of the interface: say so in `specs.md`; the wireframe only fixed the first layout.
+4. When the owner points at something, change only that, and say what changed. **When their words leave a visible detail open** (« the same color code as the others », while the new element has no rank to pick a color from), ask for that detail by name instead of picking one and taking a short « yes » for it: a red picked that way had to be undone.
+5. From then on, **the mock-up is the single source of truth** of the interface: say so in `specs.md`; the wireframe only fixed the first layout and isn't kept up to date.
 
 ## 4. Finish: the design tokens
 
