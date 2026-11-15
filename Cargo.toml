@@ -2,26 +2,62 @@
 name = "rust-subscriptions-tracker"
 version = "0.1.0"
 edition = "2024"
-rust-version = "1.93"
+rust-version = "1.95"
 description = "Track your subscriptions and get a desktop notification before each cancellation deadline."
 authors = ["Aunim HASSAN"]
-license = "MIT"
+license = "GPL-3.0-or-later"
 repository = "https://github.com/sylent-dev/rust-subscriptions-tracker"
 readme = "README.md"
+publish = false
 
-# The executable, named without the `rust-` prefix of the repository: its name is also the one
-# the reminder scheduler runs, and it names the release archives (`release.yml`).
+# The executable, named without the `rust-` prefix of the repository: its name is also the
+# application id of the window and the folder of the user's directories (`APP_ID` in main.rs).
+# It names the release archives too (`release.yml`): a download page that links to them breaks
+# when it is renamed.
 [[bin]]
 name = "subscriptions-tracker"
 path = "src/main.rs"
 
 [dependencies]
+directories = "6.0.0"
+# `clipboard` makes the copies and the pastes in the fields of egui reach the clipboard of the
+# system: without it, egui-winit keeps the text to itself (.github/scripts/system-clipboard.sh
+# checks it). `accesskit` is the support of the screen readers; on Linux it brings the D-Bus
+# crates (zbus, atspi). `default_fonts` until the application embeds its own.
+eframe = { version = "0.37", default-features = false, features = ["accesskit", "clipboard", "default_fonts", "glow", "persistence", "x11"] }
+egui = { version = "0.37", default-features = false }
+fluent-bundle = "0.16"
+log = "0.4"
+serde = { version = "1.0.229", features = ["derive"] }
+simplelog = { version = "0.12.2", default-features = false }
+sys-locale = "0.3"
+toml = "1.1.8"
+unic-langid = "0.9.6"
+
+# To choose the X11 backend of the window (see main.rs). A dependency of eframe also builds
+# winit with Wayland: wayland-dlopen loads its library at run time, so that building doesn't
+# need it.
+[target.'cfg(target_os = "linux")'.dependencies]
+winit = { version = "0.30", default-features = false, features = ["x11", "wayland-dlopen"] }
+
+[dev-dependencies]
+# The version used by fluent-bundle, whose resources the tests read as syntax trees: update
+# them together.
+fluent-syntax = "0.12.0"
 
 [lints.rust]
 unsafe_code = "forbid"
 
 [lints.clippy]
 pedantic = { level = "warn", priority = -1 }
+# Outside the tests (clippy.toml): a missing value is handled, or its `expect` says why it is
+# there.
+unwrap_used = "warn"
+
+# The dependencies (fonts, rendering) stay fast in debug builds; only the code of the project
+# is built without optimizations.
+[profile.dev.package."*"]
+opt-level = 2
 
 [profile.release]
 lto = true

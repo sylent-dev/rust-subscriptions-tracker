@@ -1,0 +1,8 @@
+# `unwrap_used` is on (Cargo.toml): a test may unwrap, its failure is the message.
+allow-unwrap-in-tests = true
+
+# At most four parameters, `self` included: past that, a struct of options says what each is.
+too-many-arguments-threshold = 4
+
+# The names written in the doc comments that aren't code (the default list kept with "..").
+doc-valid-idents = ["XWayland", ".."]
