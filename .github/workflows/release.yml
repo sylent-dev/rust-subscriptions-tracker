@@ -56,7 +56,7 @@ jobs:
             exit 1
           fi
 
-  # One file for the four archives: about.toml lists the targets of the matrix below.
+  # One file for every archive: about.toml lists the targets of the matrix below.
   notices:
     name: Check the advisories and the licenses, and write the notices
     needs: tag

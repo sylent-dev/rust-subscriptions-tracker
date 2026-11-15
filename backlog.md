@@ -20,6 +20,8 @@ One entry per item, in the section of its kind: what it is in one sentence, what
 
 <!-- New commands, options, outputs or screens for a later cycle. -->
 
+- The notice of the GPL in the window (an « About » screen or panel): the license, no warranty, the link to the source code, its texts in the `.ftl` files; the window shows only the version today. To weigh in step 1 (specifications) for version 1. Noted on 2026-11-15 (code review of step 0b).
+
 - macOS support: its own scheduler (launchd) and desktop notifications, and its archives in the Release workflow (its targets in `release.yml`, `deny.toml` and `about.toml`, as in rust-desktop-template; its Clippy job already runs in the CI). Waits on: a Mac to test the reminders. Noted on 2026-11-14.
 
 ## Large works

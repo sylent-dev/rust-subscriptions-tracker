@@ -1,8 +1,9 @@
 # The security advisories and the licenses of the dependencies of the application, on every
 # system it is released for: `cargo deny check advisories licenses`, run by the Release workflow,
-# and the advisories every day by the Advisories workflow. Each license listed here is compatible
-# with GPL-3.0-or-later, the license of the application; check the list again when that license
-# changes, and keep `accepted` of about.toml the same. macOS joins the targets with its release
+# and the advisories every day by the Advisories workflow. Each license of code listed here is
+# compatible with GPL-3.0-or-later, the license of the application; a font (OFL-1.1,
+# Ubuntu-font-1.0) stays a work apart, shipped under its own license with its notice. Check the
+# list again when that license changes, and keep `accepted` of about.toml the same. macOS joins the targets with its release
 # (backlog.md).
 
 [graph]

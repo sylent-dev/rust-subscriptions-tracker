@@ -34,4 +34,4 @@ The Linux executable is built against glibc on the oldest Ubuntu runner, not mus
 
 ## The licenses of the dependencies
 
-The workflow runs `cargo deny check licenses` first (`deny.toml`), and `cargo about` refuses the same licenses (`accepted` in `about.toml`, kept the same): a dependency under a license not listed stops the build, on the pull request that changes `Cargo.lock` too. Before adding a license to both lists, read it and check that it is compatible with `GPL-3.0-or-later`.
+The workflow runs `cargo deny check licenses` first (`deny.toml`), and `cargo about` refuses the same licenses (`accepted` in `about.toml`, kept the same): a dependency under a license not listed stops the build, on the pull request that changes `Cargo.lock` too. Before adding a license to both lists, read it and check that it is compatible with `GPL-3.0-or-later` for code; a font or icons stay a work apart, shipped under their own license with its notice (What an archive holds).
