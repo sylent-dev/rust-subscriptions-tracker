@@ -20,7 +20,7 @@ One entry per item, in the section of its kind: what it is in one sentence, what
 
 <!-- New commands, options, outputs or screens for a later cycle. -->
 
-- macOS support: its own scheduler (launchd) and desktop notifications, and its archives in the Release workflow. Waits on: a Mac to test the reminders. Noted on 2026-11-14.
+- macOS support: its own scheduler (launchd) and desktop notifications, and its archives in the Release workflow (its targets in `release.yml`, `deny.toml` and `about.toml`, as in rust-desktop-template; its Clippy job already runs in the CI). Waits on: a Mac to test the reminders. Noted on 2026-11-14.
 
 ## Large works
 

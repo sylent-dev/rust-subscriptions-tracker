@@ -7,40 +7,42 @@ A small desktop application, with a window like [Exile Market](https://github.co
 - **Linux and Windows**.
 - **English and French** interface.
 
-What the tool does is described in [specs.md](specs.md), and its progress in [roadmap.md](roadmap.md). The project follows [process.md](process.md), from [rust-cli-template](https://github.com/sylent-dev/rust-cli-template).
+What the tool does is described in [specs.md](specs.md), and its progress in [roadmap.md](roadmap.md). The project follows [process.md](process.md), from [rust-desktop-template](https://github.com/sylent-dev/rust-desktop-template).
 
 ## Requirements
 
-- Linux with systemd, or Windows, and a desktop that shows notifications
-- Rust 1.93 or later (stable toolchain, see `rust-toolchain.toml`), to build it from source
+- Linux with systemd, an X11 session or XWayland, and OpenGL; or Windows. A desktop that shows notifications.
+- Rust 1.95 or later (the version of `rust-toolchain.toml` is installed by rustup), to build it from source
 
 ## Build
 
 ```sh
 cargo build --release
+cargo run
 ```
 
 ## Development
 
 ```sh
 cargo fmt --all
-cargo clippy --all-targets --all-features -- -D warnings
-cargo test --all-features
+cargo clippy --workspace --all-targets --all-features -- -D warnings
+cargo test --workspace --all-features
+sh scripts/clippy-windows.sh
+sh scripts/clippy-macos.sh
 ```
 
 ## Release
 
-1. Update `version` in `Cargo.toml` (then run `cargo build` to update `Cargo.lock`) and merge it into `main`.
-2. Tag the merged commit with the same version and push the tag:
+Follow [docs/releases.md](docs/releases.md): the version in `Cargo.toml`, the notes in `docs/release-notes/v<version>.md`, a build by hand of every system, then the tag:
 
-   ```sh
-   git switch main && git pull
-   git tag v0.1.0
-   git push origin v0.1.0
-   ```
+```sh
+git switch main && git pull
+git tag v0.1.0
+git push origin v0.1.0
+```
 
-The [Release workflow](.github/workflows/release.yml) builds the archives and publishes them as a GitHub release. It fails if the tag does not match the version of `Cargo.toml`.
+The [Release workflow](.github/workflows/release.yml) builds the archives for Linux and Windows and publishes them as a GitHub release. It fails if the tag does not match the version of `Cargo.toml`, if the notes are missing, or if the tagged commit isn't on `main`.
 
 ## License
 
-Licensed under the MIT license ([LICENSE-MIT](LICENSE-MIT)).
+Subscriptions Tracker is free software, under the GNU General Public License, version 3 or (at your option) any later version: see [LICENSE](LICENSE). It comes with no warranty. The libraries built into the executable stay under their own licenses, gathered in `THIRD-PARTY-LICENSES` in each release archive.
