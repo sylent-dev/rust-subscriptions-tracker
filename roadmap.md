@@ -4,7 +4,9 @@ The steps chosen for the application described in [specs.md](specs.md), followin
 
 ## Size of the project
 
-A desktop application with a graphical window, like rust-exile-market (`egui`): a list of the subscriptions and their screens, plus the daily check run by the system scheduler, which shows no window. Every tool, in order, for the first cycle: specifications, structure, wireframes, mock-up, design system, build, release, retrospective. Linux and Windows (macOS in the backlog), so that the tool can be downloaded from the owner's portfolio; English and French interface. Chosen on 2026-11-14; the graphical window replaced the terminal interface (`ratatui`) the same day.
+A desktop application with a graphical window, like rust-exile-market (`egui`): a list of the subscriptions and their screens, plus the daily check run by the system scheduler, which shows no window. Every tool, in order, for the first cycle: specifications, structure, wireframes, mock-up, design system, build, release, retrospective. Linux and Windows (macOS in the backlog), so that the tool can be downloaded from the owner's portfolio; English and French interface. Chosen on 2026-11-14; the graphical window replaced the terminal interface (`ratatui`) the same day. A small application, like rust-exile-market in its window, not in its size: a PWA was weighed and set aside (owner, 2026-11-18), since its reminders would need a server.
+
+Windows is built and released without being tried by hand: the owner has no Windows machine and no tester yet (2026-11-18). Until one is found, late in the cycle, Windows is checked by the CI only, its reminders (the Task Scheduler, the notifications) included.
 
 ## Reference
 
@@ -35,9 +37,11 @@ A later cycle adds its steps under a heading of its own (« Cycle 2: a history w
 
 The steps may be split into sub-steps when a pull request grows too large. When no step is left, Claude Code proposes the next items of the backlog to the owner.
 
-- [x] **0. Project setup** (start a project; 1 pull request): package renamed, MIT license, README, size of the project, `main` protected.
-- [x] **0b. Update from the template** (model: Opus 5.5; start a project; 1 pull request): rust-desktop-template at `6e0625e` taken in place of rust-cli-template. Commits: the rules, the process, the agents and the skills; the egui skeleton, its CI and its release, under GPL-3.0-or-later, for Linux and Windows; this project's documents merged. Once merged, `Lint on windows-latest` and `Lint on macos-latest` added to the required checks of `main`.
-- [ ] **1. Specifications** (model: Opus 5.5; specifications; 1 pull request expected): purpose, success criteria, desktop conventions, the windows and the daily check, data file, reminders, acceptance scenarios; the technical choices in `docs/technical-choices.md`. The daily check without a window, which the template doesn't have: how the executable knows it runs without a window, and a log that the check and the window don't erase for each other.
+- [x] **0. Project setup** (#1)
+- [x] **0b. Update from the template** (#2)
+- [ ] **1. Specifications** (model: Opus 5.5; specifications; 2 pull requests expected):
+  - [ ] **1a, the data and the daily check**: commits: (1) this archive and this split; (2) purpose, success criteria, requirements, the data file and the computation of the deadlines; (3) the daily check without a window, its reminders, the local files and a log that the check and the window don't erase for each other; (4) the technical choices. Leaves out the windows, the settings shown, the desktop conventions. No hand test.
+  - [ ] **1b, the windows and the conventions**: the desktop conventions, what each window shows (the list, the `.ics` export, the About panel with the notice of the GPL), the settings, the error handling and the acceptance scenarios. No hand test.
 - [ ] **2. Structure** (model: Opus 5.5; structure; 1 pull request expected): the windows, their screens and the settings in Excalidraw, the chosen lead in `specs.md`.
 - [ ] **3. Wireframes** (model: Opus 5.5; wireframes; 1 pull request expected): every window at its minimum size and a wide one, with its empty and error states, and the title bar decided, in `docs/wireframes/`.
 - [ ] **4. Mock-up and design system** (model: Opus 5.5; mock-up, design system; 1 or 2 pull requests expected): 3 or 4 styles compared, then the design tokens in `specs.md`.
