@@ -1,0 +1,66 @@
+# An example of subscriptions.toml, the data file of Subscriptions Tracker (specs.md, Subscriptions).
+#
+# The application writes this file in the data directory of the user; it can be edited by hand,
+# and keeps its comments when the window changes it. The order of the subscriptions doesn't matter.
+
+# A monthly subscription, taken twice: a month for a new series, then again since November.
+[[subscription]]
+id = "netflix"                  # never changes, even when the name does
+name = "Netflix"
+category = "streaming"          # one of the categories of specs.md, in English
+price = "13.49"                 # a string: an exact amount, never rounded
+currency = "EUR"
+period = "monthly"              # weekly | monthly | quarterly | yearly
+cancel_url = "https://www.netflix.com/cancelplan"
+account = "me@example.com"      # an email address or a user name, never a password
+notes = "Shared with the family."
+
+[[subscription.periods]]
+start = 2025-03-10              # the first day paid
+end = 2025-04-09                # the last day paid
+
+[[subscription.periods]]
+start = 2026-11-01              # no end: the current period, renewed on the 1st of each month
+
+# A yearly subscription with a notice: what counts is the deadline, not the renewal.
+# It must be cancelled by 2027-02-14 (the renewal of 2027-03-16 minus 30 days).
+[[subscription]]
+id = "home-insurance"
+name = "Home insurance"
+category = "insurance"
+price = "186.00"
+currency = "EUR"
+period = "yearly"
+notice_days = 30
+reminders_days = [30, 14, 3]    # in place of the default of the settings, [7, 1]
+cancel_url = "https://insurer.example.com/account"
+notes = "Cancelled by registered letter: allow for the post."
+
+[[subscription.periods]]
+start = 2024-03-16
+
+# A phone plan with a commitment: no cancellation takes effect before its end.
+[[subscription]]
+id = "phone-plan"
+name = "Phone plan"
+category = "telecom"
+price = "9.99"
+currency = "EUR"
+period = "monthly"
+
+[[subscription.periods]]
+start = 2026-07-15
+commitment_end = 2027-06-30
+
+# An ended subscription, kept for its history.
+[[subscription]]
+id = "spotify"
+name = "Spotify"
+category = "music"
+price = "11.12"
+currency = "EUR"
+period = "monthly"
+
+[[subscription.periods]]
+start = 2021-09-01
+end = 2026-11-01
