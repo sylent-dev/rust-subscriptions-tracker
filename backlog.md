@@ -20,7 +20,11 @@ One entry per item, in the section of its kind: what it is in one sentence, what
 
 <!-- New commands, options, outputs or screens for a later cycle. -->
 
-- The notice of the GPL in the window (an « About » screen or panel): the license, no warranty, the link to the source code, its texts in the `.ftl` files; the window shows only the version today. To weigh in step 1 (specifications) for version 1. Noted on 2026-11-15 (code review of step 0b).
+- Windows notifications under an id of the application's own (an AppUserModelID registered for the user), so that they no longer show « Windows PowerShell » as their sender. Waits on: a Windows tester. Noted on 2026-11-19 (step 1a).
+
+- A click on a notification opens the window on the subscription. Waits on: the first release. Noted on 2026-11-19 (step 1a).
+
+- The data file: the history of the prices (to see the rises), a period of its own (every 6 months, every 2 years), the share the user pays of a shared subscription. Waits on: the first release, used for a while. Noted on 2026-11-19 (step 1a, set aside from the draft of the data format).
 
 - macOS support: its own scheduler (launchd) and desktop notifications, and its archives in the Release workflow (its targets in `release.yml`, `deny.toml` and `about.toml`, as in rust-desktop-template; its Clippy job already runs in the CI). Waits on: a Mac to test the reminders. Noted on 2026-11-14.
 
