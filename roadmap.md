@@ -40,7 +40,8 @@ The steps may be split into sub-steps when a pull request grows too large. When 
 - [x] **0. Project setup** (#1)
 - [x] **0b. Update from the template** (#2)
 - [ ] **1. Specifications** (model: Opus 5.5; specifications; 2 pull requests expected):
-  - [x] **1a, the data and the daily check**: commits: (1) this archive and this split; (2) purpose, success criteria, requirements, the data file and the computation of the deadlines; (3) the daily check without a window, its reminders, the local files and a log that the check and the window don't erase for each other; (4) the technical choices. Leaves out the windows, the settings shown, the desktop conventions. No hand test.
+  - [x] **1a, the data and the daily check** (#4)
+  - [x] **1a2, the data format revised**: the owner's review of the format, after 1a was merged. Commits: (1) this archive and this line; (2) closed lists for the category, the period and the currency, a list of periods in place of the status and the dates, no trial, no payment, the examples and scenarios rewritten; (3) an example data file in English, and the backlog. Leaves out what 1b covers. No hand test.
   - [ ] **1b, the windows and the conventions**: the desktop conventions, what each window shows (the list, the `.ics` export, the About panel with the notice of the GPL), the settings, the error handling and the acceptance scenarios. No hand test.
 - [ ] **2. Structure** (model: Opus 5.5; structure; 1 pull request expected): the windows, their screens and the settings in Excalidraw, the chosen lead in `specs.md`.
 - [ ] **3. Wireframes** (model: Opus 5.5; wireframes; 1 pull request expected): every window at its minimum size and a wide one, with its empty and error states, and the title bar decided, in `docs/wireframes/`.

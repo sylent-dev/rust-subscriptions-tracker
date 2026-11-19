@@ -26,6 +26,10 @@ One entry per item, in the section of its kind: what it is in one sentence, what
 
 - The data file: the history of the prices (to see the rises), a period of its own (every 6 months, every 2 years), the share the user pays of a shared subscription. Waits on: the first release, used for a while. Noted on 2026-11-19 (step 1a, set aside from the draft of the data format).
 
+- Free trials as such: a status and the day the trial turns paid, rather than a period that starts on its first paid day. Waits on: users who ask for it, once the application is shared. Noted on 2026-11-19 (step 1a2; the owner doesn't use trials).
+
+- How a subscription is paid (a card, an account), to find those paid by a card that expires; the notes hold it meanwhile. Waits on: the first release. Noted on 2026-11-19 (step 1a2).
+
 - macOS support: its own scheduler (launchd) and desktop notifications, and its archives in the Release workflow (its targets in `release.yml`, `deny.toml` and `about.toml`, as in rust-desktop-template; its Clippy job already runs in the CI). Waits on: a Mac to test the reminders. Noted on 2026-11-14.
 
 ## Large works
