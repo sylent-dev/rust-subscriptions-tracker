@@ -129,11 +129,22 @@ The window and a check can run at the same time: they never write the same file 
 
 ## Design principles
 
-<!-- Look and feel, tone of the messages in each language, formal or informal address, use of colors. -->
+- **One look tells what to cancel soon**: the window is opened now and then, for a minute. The nearest deadline comes first, and what needs an action stands out; the rest stays quiet.
+- **Plain words**: short sentences that say what happened and what to do, without jargon (« deadline », not « termination date »). French addresses the user with « vous » (owner, 2026-11-19): a tool of money and paperwork, for a wide public.
+- **Colors that help, never alone**: a deadline whose first reminder has come is **soon**, one that is today is **urgent**, each with a color of its own; the text says the same (« in 3 days », « today »), for a user who doesn't see the color.
+- **Nothing hidden**: what the application installs on the system (the daily check) is said in the window, with how to remove it; nothing leaves the computer.
+- The interface never names a competitor, not even in a help text.
 
 ## Desktop conventions
 
-<!-- The answers to process.md, Desktop conventions: the window (sizes, resizable, position kept), the title bar (the system's or its own), the keyboard and any global hotkey, the language, the theme, the feedback of a wait and of an error, the files, a second instance. Only what departs from the usual, or a choice to make. -->
+- **Window**: 720 × 560 points by default, 480 × 400 at the smallest, and it can be resized; it can't be made smaller than its smallest size. Its size and position are kept from one launch to the next (`window.ron`), and a window that would open off the screens is brought back on one.
+- **Title bar**: the one of the system.
+- **Keyboard**: Tab and Shift+Tab move between the controls, Enter opens the subscription chosen in the list; Ctrl+N adds a subscription, Ctrl+S saves the open form; Escape closes the open form or panel, asking first when a form has changes. No global hotkey: the application isn't used over another program.
+- **Language**: the language of the system until the user picks one in the settings, and English when the system's language isn't translated. The dates are written per language (« Wednesday 3 December 2026 », « mercredi 3 décembre 2026 »), and so are the amounts, with the symbol of their currency (« €13.49 », « 13,49 € »; « CA$13.49 », « 13,49 $ CA »; « 1,049.00 », « 1 049,00 »). French is the longest language, drawn in the wireframes and the mock-up.
+- **Theme**: the theme of the system, light or dark, until the user picks one in the settings; the colors of « soon » and « urgent » keep their meaning in both.
+- **Feedback**: every file is local and small, so the window shows no wait, except while it installs the daily check (« Turning the reminders on… »). Every error is shown in the window, with what happened and what to do, never in the log only (see [Error handling](#error-handling)). Nothing typed is lost: closing the window while a form has changes asks to save them, to drop them or to go back.
+- **Files**: in the folders of each system (see [Local files](#local-files)), each one written atomically.
+- **Instances**: a second launch opens a second window. Each window reads the data file again before each save and when it gets the focus back, and applies its change to what it read then, so that two windows, or a window and an edit by hand, never erase each other's changes (see [Windows](#windows)). Bringing the first window forward instead would need the two processes to talk to each other and a window raised on X11: much more code for a rare case.
 
 ## Window layout
 
@@ -141,22 +152,117 @@ The window and a check can run at the same time: they never write the same file 
 
 ## Windows
 
-<!-- One subsection per window or panel: what it shows, what each control does, the edge cases, and its acceptance scenarios, each of which becomes a test of the state it draws, or a step of a guide of the test by hand when it needs the system. For example:
+What each screen shows and does. Where each one sits (a window of its own, a panel of the main window) is decided by the structure (step 2), then drawn in the wireframes.
 
-### Main window
+### The list
 
-Shows the last item copied and its price.
+The main window: the subscriptions and what they cost.
+
+- **Totals**, at the top: the cost of the active subscriptions a month and a year, each currency apart (« €28.99 a month · €347.88 a year »). The cost of a year is the price brought to a year (weekly × 52, monthly × 12, quarterly × 4, yearly as it is), rounded to the cent, half up, only when shown.
+- **Active**: sorted by deadline, the nearest first, then by name. Each row shows the name, the category, the price and its period (« €13.49 / month »), the monthly cost when the period isn't a month, and the deadline: « Cancel by Wednesday 3 December (in 7 days) », marked **soon** or **urgent** (see [Design principles](#design-principles)). While a commitment runs: « Committed until 30 June 2027 · cancel by 15 July 2027 ». When the next renewal can no longer be avoided: « Renews on 3 December: too late to cancel this one · then cancel by 27 December ».
+- **Ending**: « Ends on Tuesday 2 December », the nearest first. They count in no total: they renew no more.
+- **Ended**: kept visible, apart from the others, as the history of the user's subscriptions: « Ended on 9 April 2026 », the most recent first. A folded group or a history section of their own: decided by the structure.
+- **Unreadable**: shown before the others, each with its `id` (or its place in the file when it has none), the field and the reason, and two buttons, « Open the file » (in the text editor of the system) and « Reload ». While one of them is there, the window saves nothing (see [Local files](#local-files)): adding and changing a subscription are turned off, with the reason said.
+- **Empty**: « No subscription yet », and a button to add the first one.
+- When the daily check is off, a line says « Reminders are off », with a link to the settings.
+- The window reads the data file again when it gets the focus back, so that an edit by hand or in another window shows at once.
 
 ```text
-First launch, no settings file     → the window opens at 420 × 640 px, in the language of the system
-An item copied in the game         → the window shows its name and its price within a second
-The price service unreachable      → « Prices unavailable » with the age of the cached prices, and a retry button
+No data file                                         → « No subscription yet » and « Add a subscription »
+Three active subscriptions                           → sorted by deadline, the nearest first
+A deadline in 2 days, reminders [7, 1]               → soon, « in 2 days »
+A deadline today                                     → urgent, « Today is the last day to cancel »
+The next renewal can no longer be avoided            → « too late to cancel this one », and the deadline after it
+Netflix €13.49 monthly, home insurance €186.00
+  yearly, Spotify $10.99 monthly                     → « €28.99 a month · €347.88 a year », « $10.99 a month · $131.88 a year »
+A subscription ending on 2 December                  → under Ending, counted in no total
+A subscription ended on 9 April 2026                 → in the history, counted in no total
+One subscription can't be read                       → shown first with its field and reason; the others shown; adding and changing turned off, with the reason
+The data file changed by hand, the window open       → read again when the window gets the focus back
 ```
--->
+
+### The form of a subscription
+
+Opened from the list on a subscription, or empty to add one.
+
+- Every field of the subscription (see [Subscriptions](#subscriptions)), the category, the currency and the period chosen from their lists, translated; a date is entered with a control chosen at the mock-up, which accepts real days only. Its periods are listed, the current one first; « Add a past period » records one more.
+- What is computed is shown next to the fields, never entered: the status, the next renewal, the deadline, the monthly and yearly costs, the coming reminders.
+- **Save** checks every rule at once, shows each error next to its field, and writes nothing while one is left. It writes only this subscription, keeping the comments, the order and the fields this version doesn't know.
+- A new subscription starts monthly, from today, in the category `other`, with no notice and the reminders of the settings, in the currency most used in the file, or, in an empty file, the currency of the system's region (`USD` in the United States, `GBP` in the United Kingdom, `CHF` in Switzerland, `CAD` in Canada, `EUR` elsewhere). Its `id` is made from its name, in lowercase letters, digits and dashes (« Home insurance » gives `home-insurance`, then `home-insurance-2` when it's taken), and never changes after.
+- **I cancelled it**, on an active subscription: asks the last day paid, proposing the day before the renewal of the deadline shown, and writes it as the `end` of the current period. **Undo the cancellation**, on an ending one, removes that `end`. **Subscribe again**, on an ended one, adds a period that starts today (the day can be changed).
+- **Open the cancellation page**, when the subscription has a `cancel_url`: opens it in the browser of the system.
+- **Delete**: asks first (« Delete Netflix and its history? This can't be undone. »), then removes the subscription from the file. « I cancelled it » keeps the history instead, and the confirmation says so.
+- Closing the form, or the window, while it has changes asks to save them, to drop them or to go back.
+- Before each save, the window reads the file again. When this subscription was changed or removed in the file since the form opened, nothing is written: « Netflix was changed outside this window since you opened it », with « Keep my version » and « Take the file's version ». Another subscription changed in the meantime is kept as it is in the file.
+
+```text
+« Add a subscription » in an empty file, the system in France  → monthly, from today, EUR, other, the reminders of the settings
+Name « Home insurance », another home-insurance in the file     → id home-insurance-2
+Price « 13,499 »                                                → refused: « Two decimals at most »
+cancel_url « file:///home »                                     → refused: « The address must start with https:// or http:// »
+A period that starts before the end of the previous one          → refused: « Its periods overlap »
+« I cancelled it » on a monthly subscription, next renewal
+  2026-12-03                                                    → proposes 2026-12-02; once saved, « Ends on 2 December »
+« Delete » on Netflix                                           → asks first; once confirmed, Netflix is gone from the file, its comments around the others kept
+The window closed with a form changed                           → asks: Save, Don't save, Go back
+Netflix changed by hand while its form is open, then Save       → nothing written; « Keep my version » or « Take the file's version »
+Spotify changed by hand while the form of Netflix is open       → Netflix saved; Spotify kept as changed by hand
+```
+
+### The calendar export
+
+Brings the deadlines into a calendar (a phone's, an online one) without a server: the user imports the file into it.
+
+- « Export to a calendar » writes `subscriptions-deadlines.ics` in the user's downloads folder (their home folder when the system has none), replacing the previous export, then shows its path and « Open the folder ».
+- For each active subscription, every deadline from today to the same day a year later, excluded, computed like the next one (see [Deadlines](#deadlines)): an event of the whole day « Cancel Netflix », with the price and the cancellation page in its description, and an alarm at 9:00 on the day of each of its reminders.
+- Each event keeps the same identifier from one export to the next (the `id` of the subscription and the date), so that a calendar that imports the file again can update its events rather than doubling them; whether it does depends on the calendar.
+- The file doesn't update itself: the notice says to export again after a change. The subscriptions ending, ended or unreadable are left out, the unreadable ones with a word (« 1 subscription left out: it can't be read »).
+
+```text
+One monthly subscription, the deadline on the 3rd            → 12 events, one on the 3rd of each month (or the last day of a shorter month)
+One weekly subscription                                       → 52 or 53 events, one a week
+Reminders [7, 1] on a deadline                                → two alarms, at 9:00, 7 days and 1 day before
+No active subscription                                        → the export turned off: « No deadline to export »
+The downloads folder can't be written                         → nothing written; the reason and the path said
+```
+
+### About
+
+- The name of the application, its version and one sentence of what it does.
+- The notice of the license: « Subscriptions Tracker is free software, under the GNU General Public License, version 3 or later: you may share and change it under its terms. It comes with no warranty. », with links to the text of the license and to the source code (`https://github.com/sylent-dev/rust-subscriptions-tracker`). The licenses of the libraries it is built with are in `THIRD-PARTY-LICENSES`, next to the executable.
+- Where the data lives, with « Open the folder »: copying `subscriptions.toml` is how to back it up.
+
+```text
+About opened                 → the version of the executable, the notice of the GPL, the links, the data folder
+« Open the folder »          → the folder of subscriptions.toml in the file manager of the system
+```
 
 ## Settings
 
-<!-- Each setting: what it changes, its default, where it is shown, and what happens to a value this version can't read (it takes its default). -->
+The settings are saved in `settings.toml` (see [Local files](#local-files)) as soon as one changes, and apply at once: there is no Save button. The daily check reads the language and the default reminders.
+
+| Setting | What it changes | Default |
+|---|---|---|
+| `language` | The language of the window and of the notifications: `system`, `en` or `fr`. | `system` |
+| `theme` | The theme of the window: `system`, `light` or `dark`. | `system` |
+| `daily_check` | Whether the system runs the daily check (see [Installation](#installation)): turning it off removes the timer or the task, turning it on installs it again. | `true` |
+| `reminders_days` | When to be warned, in days before the deadline, for the subscriptions that have no `reminders_days` of their own. | `[7, 1]` |
+
+- A list of reminders, in the settings or in a subscription, holds whole numbers from 0 (the day of the deadline) to 365, at most five, written « 7, 1 » in the window; it is kept sorted from the largest, without duplicates. An empty list means no reminder.
+- The hour of the check stays 9:00 in version 1 (a setting waits in the backlog).
+- The file also keeps what the window has already said once (`reminders_notice_shown`, the notice that the reminders are on), which is not shown as a setting.
+- A value this version can't read takes its default, without losing the others; a file that isn't TOML is kept aside as `settings.invalid.toml` before the defaults replace it, and the window says so once.
+
+```text
+First launch, no settings file          → the window opens at 720 × 560, in the language of the system; the check is installed and the notice of the reminders shown once
+The system in German                    → the window in English
+language = "klingon"                    → the language of the system; the other settings kept
+The settings file isn't TOML            → kept aside as settings.invalid.toml, the defaults taken, a notice says so once
+The language set to French              → the window in French at once; the next notifications in French
+The daily check turned off              → the timer or the task removed; the settings say « Reminders are off: no notification will be sent »
+The default reminders set to « 14, 3 »  → from the next check, for the subscriptions without their own; a reminder already sent isn't sent again
+Reminders « 3, 3, 400 »                 → refused: « 400 is more than 365 days »
+```
 
 ## Visual style
 
@@ -182,3 +288,18 @@ The data file can be edited by hand, like [its example](docs/subscriptions-examp
 
 | Situation | Behavior |
 |---|---|
+| No data file (the first launch) | The empty list; the file is created at the first save. |
+| The data file isn't TOML, or can't be read (its rights) | The window shows the file, the line and the reason, with « Open the file » and « Reload », and saves nothing; the check sends one notification a day at most (see [What a check does](#what-a-check-does)). |
+| One subscription can't be read | Shown first in the list with its field and reason; the others shown and checked; the window saves nothing until it's fixed by hand. |
+| A save fails (the disk full, the file read-only) | The file on the disk stays as it was (written atomically); the form stays open with what was typed, and says the reason and the path. |
+| The subscription changed outside the window since its form opened | Nothing written; the user keeps their version or takes the file's (see [The form of a subscription](#the-form-of-a-subscription)). |
+| The settings file isn't TOML, or one value can't be read | See [Settings](#settings): the file kept aside, or the value at its default, and the window says so once. |
+| The daily check can't be installed (no `systemctl`, no user session, the Task Scheduler refusing) | A notice in the window: « The reminders couldn't be turned on », the reason, and « Try again »; the setting stays on, and each launch tries again. |
+| The daily check can't be removed | The settings say so, with the files or the task to remove by hand. |
+| `reminders.toml` isn't TOML | Kept aside as `reminders.invalid.toml`, and the check starts again from an empty file, which it writes to its log: a reminder sent earlier the same day may come again, a risk accepted rather than a reminder lost. |
+| A notification can't be sent (no notification service) | Written to the log of the check, and not remembered as sent: the next check tries again while its deadline isn't past. |
+| `reminders.toml` can't be written | Written to the log of the check: the reminders of the day may come again at the next check. |
+| A log can't be written | The application goes on without it. |
+| The browser or the file manager can't be opened | The address or the path is shown, to copy. |
+| The calendar export can't be written | Nothing written; the reason and the path said. |
+| A second launch | A second window, safe (see [Desktop conventions](#desktop-conventions)). |

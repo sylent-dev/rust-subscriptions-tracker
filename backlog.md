@@ -30,6 +30,14 @@ One entry per item, in the section of its kind: what it is in one sentence, what
 
 - How a subscription is paid (a card, an account), to find those paid by a card that expires; the notes hold it meanwhile. Waits on: the first release. Noted on 2026-11-19 (step 1a2).
 
+- Statistics: the spending by category, and over the years from the history of the periods. Waits on: the first release. Noted on 2026-11-19 (step 1b, the owner likes the totals).
+
+- The hour of the daily check as a setting (9:00 in version 1). Waits on: users who ask for it. Noted on 2026-11-19 (step 1b).
+
+- A copy of the data file before each save (`subscriptions.previous.toml`), against a deletion regretted. Waits on: the first release. Noted on 2026-11-19 (step 1b).
+
+- A second launch that brings the first window forward rather than opening a second one. Waits on: users who ask for it. Noted on 2026-11-19 (step 1b).
+
 - macOS support: its own scheduler (launchd) and desktop notifications, and its archives in the Release workflow (its targets in `release.yml`, `deny.toml` and `about.toml`, as in rust-desktop-template; its Clippy job already runs in the CI). Waits on: a Mac to test the reminders. Noted on 2026-11-14.
 
 ## Large works
