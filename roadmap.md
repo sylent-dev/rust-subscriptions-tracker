@@ -41,8 +41,8 @@ The steps may be split into sub-steps when a pull request grows too large. When 
 - [x] **0b. Update from the template** (#2)
 - [ ] **1. Specifications** (model: Opus 5.5; specifications; 2 pull requests expected):
   - [x] **1a, the data and the daily check** (#4)
-  - [x] **1a2, the data format revised**: the owner's review of the format, after 1a was merged. Commits: (1) this archive and this line; (2) closed lists for the category, the period and the currency, a list of periods in place of the status and the dates, no trial, no payment, the examples and scenarios rewritten; (3) an example data file in English, and the backlog. Leaves out what 1b covers. No hand test.
-  - [ ] **1b, the windows and the conventions**: the desktop conventions, what each window shows (the list, the `.ics` export, the About panel with the notice of the GPL), the settings, the error handling and the acceptance scenarios. No hand test.
+  - [x] **1a2, the data format revised** (#5)
+  - [ ] **1b, the windows and the conventions**: commits: (1) this archive and this line; (2) the design principles, the desktop conventions (a second window allowed, the file read again before each save) and the settings; (3) what each screen shows and does (the list and its totals, the form of a subscription, the `.ics` export, the About panel with the notice of the GPL), with their acceptance scenarios; (4) the error handling, the technical choices and the backlog. Leaves out where each screen sits (step 2, Structure: the ended subscriptions in a folded group or a history section of their own). No hand test.
 - [ ] **2. Structure** (model: Opus 5.5; structure; 1 pull request expected): the windows, their screens and the settings in Excalidraw, the chosen lead in `specs.md`.
 - [ ] **3. Wireframes** (model: Opus 5.5; wireframes; 1 pull request expected): every window at its minimum size and a wide one, with its empty and error states, and the title bar decided, in `docs/wireframes/`.
 - [ ] **4. Mock-up and design system** (model: Opus 5.5; mock-up, design system; 1 or 2 pull requests expected): 3 or 4 styles compared, then the design tokens in `specs.md`.
