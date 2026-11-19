@@ -288,3 +288,18 @@ The data file can be edited by hand, like [its example](docs/subscriptions-examp
 
 | Situation | Behavior |
 |---|---|
+| No data file (the first launch) | The empty list; the file is created at the first save. |
+| The data file isn't TOML, or can't be read (its rights) | The window shows the file, the line and the reason, with « Open the file » and « Reload », and saves nothing; the check sends one notification a day at most (see [What a check does](#what-a-check-does)). |
+| One subscription can't be read | Shown first in the list with its field and reason; the others shown and checked; the window saves nothing until it's fixed by hand. |
+| A save fails (the disk full, the file read-only) | The file on the disk stays as it was (written atomically); the form stays open with what was typed, and says the reason and the path. |
+| The subscription changed outside the window since its form opened | Nothing written; the user keeps their version or takes the file's (see [The form of a subscription](#the-form-of-a-subscription)). |
+| The settings file isn't TOML, or one value can't be read | See [Settings](#settings): the file kept aside, or the value at its default, and the window says so once. |
+| The daily check can't be installed (no `systemctl`, no user session, the Task Scheduler refusing) | A notice in the window: « The reminders couldn't be turned on », the reason, and « Try again »; the setting stays on, and each launch tries again. |
+| The daily check can't be removed | The settings say so, with the files or the task to remove by hand. |
+| `reminders.toml` isn't TOML | Kept aside as `reminders.invalid.toml`, and the check starts again from an empty file, which it writes to its log: a reminder sent earlier the same day may come again, a risk accepted rather than a reminder lost. |
+| A notification can't be sent (no notification service) | Written to the log of the check, and not remembered as sent: the next check tries again while its deadline isn't past. |
+| `reminders.toml` can't be written | Written to the log of the check: the reminders of the day may come again at the next check. |
+| A log can't be written | The application goes on without it. |
+| The browser or the file manager can't be opened | The address or the path is shown, to copy. |
+| The calendar export can't be written | Nothing written; the reason and the path said. |
+| A second launch | A second window, safe (see [Desktop conventions](#desktop-conventions)). |
