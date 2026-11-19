@@ -39,11 +39,8 @@ The steps may be split into sub-steps when a pull request grows too large. When 
 
 - [x] **0. Project setup** (#1)
 - [x] **0b. Update from the template** (#2)
-- [x] **1. Specifications** (model: Opus 5.5; specifications; 2 pull requests expected):
-  - [x] **1a, the data and the daily check** (#4)
-  - [x] **1a2, the data format revised** (#5)
-  - [x] **1b, the windows and the conventions**: commits: (1) this archive and this line; (2) the design principles, the desktop conventions (a second window allowed, the file read again before each save) and the settings; (3) what each screen shows and does (the list and its totals, the form of a subscription, the `.ics` export, the About panel with the notice of the GPL), with their acceptance scenarios; (4) the error handling, the technical choices, the backlog, and the build steps in this file (owner, 2026-11-19). Leaves out where each screen sits (step 2, Structure: the ended subscriptions in a folded group or a history section of their own). No hand test.
-- [ ] **2. Structure** (model: Opus 5.5; structure; 1 pull request expected): the windows, their screens and the settings in Excalidraw, the chosen lead in `specs.md`.
+- [x] **1. Specifications** (#4, #5, #6)
+- [ ] **2. Structure** (model: Opus 5.5; structure; 1 pull request expected): where each screen sits (the list, the form of a subscription, the settings, the calendar export, About, the ended subscriptions). Commits: (1) this archive and this line; (2) `docs/wireframes/structure.excalidraw`: the screens of `specs.md` not placed yet, two leads side by side (A, one window whose panels open beside or over the list, the ended subscriptions in a folded group; B, a navigation bar with a history section, the form in place of the list), a parking area and the open questions; (3) the owner's version, once the cards are moved and a lead chosen; (4) the chosen lead redrawn, completed, and written in `specs.md`. Leaves out the layout inside each screen and the sizes (step 3). No hand test.
 - [ ] **3. Wireframes** (model: Opus 5.5; wireframes; 1 pull request expected): every window at its minimum size and a wide one, with its empty and error states, and the title bar decided, in `docs/wireframes/`.
 - [ ] **4. Mock-up and design system** (model: Opus 5.5; mock-up, design system; 1 or 2 pull requests expected): 3 or 4 styles compared, then the design tokens in `specs.md`.
 - The build steps, after the mock-up (owner, 2026-11-19), each split into sub-steps at its start; the translations, English and French, in each step:
