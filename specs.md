@@ -78,6 +78,43 @@ Yearly at 186.00 EUR                                  → 15.50 EUR a month
 Weekly at 4.99 USD                                    → 21.62 USD a month
 ```
 
+## Daily check
+
+The reminders come from a check the system runs every day, without a window: the user gets them without opening the application, nor leaving it open.
+
+### Installation
+
+- The window installs the check at its first launch, on by default; a setting turns it off, which removes it from the system, and on again (see [Settings](#settings)). The window says once, in a short notice, that the reminders are on, and how to turn them off.
+- On Linux, a systemd user timer, which starts the check every day at 9:00 and, when the computer was off or the session closed at that hour, at the next login. On Windows, a task of the Task Scheduler, with the same hours and the same catching up.
+- The scheduler starts the executable itself with the argument `--check`: there is a single executable, which opens its window when it's started without it.
+- At each launch, the window checks that the installed check starts this very executable, and installs it again otherwise: an archive unpacked in another folder, a new version that replaced the old one, then keep their reminders without a step from the user.
+- Removing the application without turning the check off first leaves the timer or the task behind, starting a file that no longer exists: it fails without a message. The README says how to remove it by hand.
+
+### What a check does
+
+1. Reads the settings and the subscriptions. It never writes the data file: only the window does.
+2. Computes the deadline of each subscription (see [Deadlines](#deadlines)), and the reminders due: the day of a reminder is the deadline minus one of its `reminders_days`.
+3. Sends a notification for each reminder due today, and for each reminder missed since the last check (the computer off that day) while its deadline isn't past. Each reminder is sent once only; when several reminders of the same deadline were missed, only the latest is sent.
+4. Writes what it did to its log, then exits.
+
+A notification names the subscription and its deadline, in the language of the settings, for example « Netflix: cancel by Wednesday 3 December (in 7 days) », or « Adobe Lightroom: today is the last day to cancel the trial ». More than three notifications at once give way to a single one: « 5 subscriptions to cancel soon: open Subscriptions Tracker ». A click on a notification does nothing in version 1 (opening the window from it waits in the backlog).
+
+```text
+Deadline 2026-12-03, reminders [7, 1], check on 2026-11-26   → « in 7 days », remembered
+Same, second check on 2026-11-26 (a second login)            → nothing
+Same, the computer off from 2026-11-25 to 2026-12-02         → on 2026-12-02, « in 1 day » only
+Same, the computer off from 2026-11-25 to 2026-11-28         → on 2026-11-28, « in 5 days »
+Same, the computer off until 2026-12-04                      → nothing: the deadline is past
+Reminder 0 in the list, check on the deadline                → « today is the last day »
+The subscription renamed after a reminder                    → the reminder isn't sent again (same id)
+Four reminders due on the same day                           → one notification for the four
+A cancelled subscription                                     → nothing
+The data file can't be read                                  → one notification a day at most: « The subscriptions can't be read: open Subscriptions Tracker »
+The check turned off in the settings                         → the timer or the task is gone; no check runs
+```
+
+The window and a check can run at the same time: they never write the same file (see [Local files](#local-files)).
+
 ## Design principles
 
 <!-- Look and feel, tone of the messages in each language, formal or informal address, use of colors. -->
@@ -115,7 +152,19 @@ The price service unreachable      → « Prices unavailable » with the age of 
 
 ## Local files
 
-<!-- Files read or written by the application (settings, window.ron, data, cache, log), where they live on each system, and whether they are tracked by Git. -->
+None of them is tracked by Git: they belong to the user. Every file the application writes is written atomically (a new file synced to the disk, then renamed), never left half-written.
+
+| File | What it holds | Written by | Linux | Windows |
+|---|---|---|---|---|
+| `settings.toml` | The settings | The window | `~/.config/subscriptions-tracker/` | `%APPDATA%\subscriptions-tracker\config\` |
+| `window.ron` | The size and position of the window (eframe) | The window | Same | Same |
+| `subscriptions.toml` | The subscriptions | The window, or the user by hand | `~/.local/share/subscriptions-tracker/` | `%APPDATA%\subscriptions-tracker\data\` |
+| `reminders.toml` | The reminders already sent, by `id`, deadline and day; a reminder of a past deadline is dropped | The check | `~/.local/share/subscriptions-tracker/` | `%LOCALAPPDATA%\subscriptions-tracker\data\` |
+| `log.txt` | The log of the window, written again at each launch | The window | `~/.local/share/subscriptions-tracker/` | `%LOCALAPPDATA%\subscriptions-tracker\data\` |
+| `check-log.txt` | The log of the checks, added to at each check and cut to its last 500 lines, so that it never grows and the window never erases it | The check | Same as `log.txt` | Same as `log.txt` |
+| `subscriptions-tracker-check.service`, `.timer` | The daily check | The window | `~/.config/systemd/user/` | A task « Subscriptions Tracker check » of the Task Scheduler, at its root |
+
+The data file can be edited by hand, like the draft it comes from: a change made in the window keeps its comments, its order and the fields this version doesn't know (written by a later version). The window never writes over what it can't read: while the file, or one of its subscriptions, can't be read, the window shows which one and why, and saves nothing until it's fixed by hand (see [Error handling](#error-handling)). `%APPDATA%` holds what follows the user from one Windows computer to another (the settings and the subscriptions), `%LOCALAPPDATA%` what belongs to this computer.
 
 ## Error handling
 
