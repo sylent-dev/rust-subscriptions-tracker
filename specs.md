@@ -152,7 +152,16 @@ The window and a check can run at the same time: they never write the same file 
 
 ## Windows
 
-What each screen shows and does. Where each one sits (a window of its own, a panel of the main window) is decided by the structure (step 2), then drawn in the wireframes.
+One window holds every screen, as drawn in [docs/wireframes/main-window.excalidraw](docs/wireframes/main-window.excalidraw): the structure the owner chose on 2026-11-19, from eight variants kept in the history of that file. No screen opens a window of its own.
+
+- **The list** fills the window: the totals at the top, with « + Add », « Export .ics » and the settings (⚙); under them, the notices (an unreadable subscription, the reminders off or not turned on); then three tabs over a table, **Active**, **Ending** and **Ended**, each with its count. A click on a row, or Enter, opens its form.
+- **The form of a subscription** takes the place of the table at the default size, with « ← Back »; in a wide window, it opens beside the table, which keeps its name and date columns. The totals and the tabs stay in view. The width where it switches is decided by the wireframes.
+- **The settings** open over the window from ⚙, and close with ✕ or Escape; **About** is their last section.
+- **The calendar export** opens a small dialog over the window, which says what the file is and how to use it, then shows its path and « Open the folder ».
+- **The confirmations** (a deletion, the changes not saved, a subscription changed outside the window) are small dialogs over the window.
+- **The first launch**, with no subscription: no totals and no tabs, « No subscription yet » and « + Add a subscription », under the notice that the reminders are on, shown once.
+
+What each screen shows and does:
 
 ### The list
 
@@ -161,7 +170,7 @@ The main window: the subscriptions and what they cost.
 - **Totals**, at the top: the cost of the active subscriptions a month and a year, each currency apart (« €28.99 a month · €347.88 a year »). The cost of a year is the price brought to a year (weekly × 52, monthly × 12, quarterly × 4, yearly as it is), rounded to the cent, half up, only when shown.
 - **Active**: sorted by deadline, the nearest first, then by name. Each row shows the name, the category, the price and its period (« €13.49 / month »), the monthly cost when the period isn't a month, and the deadline: « Cancel by Wednesday 3 December (in 7 days) », marked **soon** or **urgent** (see [Design principles](#design-principles)). While a commitment runs: « Committed until 30 June 2027 · cancel by 15 July 2027 ». When the next renewal can no longer be avoided: « Renews on 3 December: too late to cancel this one · then cancel by 27 December ».
 - **Ending**: « Ends on Tuesday 2 December », the nearest first. They count in no total: they renew no more.
-- **Ended**: kept visible, apart from the others, as the history of the user's subscriptions: « Ended on 9 April 2026 », the most recent first. A folded group or a history section of their own: decided by the structure.
+- **Ended**: kept, in a tab of their own, as the history of the user's subscriptions: « Ended on 9 April 2026 », the most recent first.
 - **Unreadable**: shown before the others, each with its `id` (or its place in the file when it has none), the field and the reason, and two buttons, « Open the file » (in the text editor of the system) and « Reload ». While one of them is there, the window saves nothing (see [Local files](#local-files)): adding and changing a subscription are turned off, with the reason said.
 - **Empty**: « No subscription yet », and a button to add the first one.
 - When the daily check is off, a line says « Reminders are off », with a link to the settings.
