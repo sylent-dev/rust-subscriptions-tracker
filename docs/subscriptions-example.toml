@@ -22,8 +22,8 @@ end = 2025-04-09                # the last day paid
 [[subscription.periods]]
 start = 2026-11-01              # no end: the current period, renewed on the 1st of each month
 
-# A yearly subscription with a notice: what counts is the deadline, not the renewal.
-# It must be cancelled by 2027-02-14 (the renewal of 2027-03-16 minus 30 days).
+# A yearly subscription with a notice: its reminders count from the last day to cancel,
+# 2027-02-14 (the renewal of 2027-03-16 minus 30 days), so that they come in time to cancel it.
 [[subscription]]
 id = "home-insurance"
 name = "Home insurance"

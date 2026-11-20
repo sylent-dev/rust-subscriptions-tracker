@@ -8,20 +8,20 @@ Remove or add sections as needed.
 
 ## Purpose
 
-Subscriptions Tracker is a small desktop application that keeps the list of the user's subscriptions in a local file, and warns them by a desktop notification before the last day they can cancel each one, so that no subscription renews because the date was missed.
+Subscriptions Tracker is a small desktop application that keeps the list of the user's subscriptions in a local file, shows when each one renews and what it costs, and warns them by a desktop notification a few days before each renewal, so that no payment comes as a surprise. A subscription with a notice is warned about before its last day to cancel instead, so that the reminder still comes in time to cancel it (owner, 2026-11-19: what matters is when the money leaves; cancelling is rare).
 
 - Users: people who pay for a few dozen subscriptions or fewer (streaming, software, insurance, phone plan), on Linux or Windows, in English or French. Most of them never open a terminal: they download the application from the owner's portfolio.
 - Used alone, in one small window, opened now and then to add, change or cancel a subscription. The reminders don't need the window: the system runs a check once a day, which shows no window (see [Daily check](#daily-check)).
 - Local only: the data stays in files on the user's disk, with no server, no online account and no network access.
 - Volume: up to about a hundred subscriptions; one check a day.
-- Version 1: the list of the subscriptions, their deadlines and monthly costs, the daily check and its notifications, an export of the deadlines to a calendar (`.ics`), and an About panel with the notice of the GPL.
+- Version 1: the list of the subscriptions, their renewals and monthly costs, the daily check and its notifications, an export of the renewals to a calendar (`.ics`), and an About panel with the notice of the GPL.
 
 ## Success criteria
 
 Checked one by one at the retrospective of the first cycle:
 
 - The owner keeps every subscription of theirs in it, and no other list.
-- During the first three months of use, the owner gets a notification before each deadline of their subscriptions, also after a day when the computer stayed off, and no subscription renews because its deadline was missed.
+- During the first three months of use, the owner gets a notification before each renewal of their subscriptions, also after a day when the computer stayed off: no payment comes as a surprise, and no subscription with a notice renews because its last day to cancel was missed.
 - An archive downloaded from the release opens its window and installs the daily check on Linux; on Windows, the same once a tester has tried it (until then, the CI only: see the roadmap).
 
 ## Requirements
@@ -42,8 +42,8 @@ A subscription is one entry of the data file (see [Local files](#local-files)); 
 | `period` | `weekly`, `monthly`, `quarterly` or `yearly`. |
 | `periods` | The periods the user was subscribed, one or more (see below). |
 | `category` | `streaming`, `music`, `software`, `cloud`, `news`, `gaming`, `insurance`, `telecom` (phone and internet), `utilities` (energy, water), `fitness`, `education` or `other`, the default. |
-| `notice_days` | The notice: the subscription must be cancelled at least this many days before a renewal. 0 by default. |
-| `reminders_days` | When to be warned, in days before the deadline (`[30, 14, 3]`), in place of the default of the settings (`[7, 1]`). |
+| `notice_days` | The notice: the subscription must be cancelled at least this many days before a renewal. 0 by default. The reminders then count from the last day to cancel (see [Renewals](#renewals)). |
+| `reminders_days` | When to be warned, in days before the renewal, or before the last day to cancel when there is a notice (`[30, 14, 3]`), in place of the default of the settings (`[7, 1]`). |
 | `cancel_url` | The page where it is cancelled: an address that starts with `https://` or `http://`, without spaces. Another address (`file:`, `javascript:`) is refused, since opening it would start something on the computer. |
 | `account` | The account used, to know where to log in: an email address or a user name, as the user writes it. Never a password. |
 | `notes` | Free notes (« Shared with the family », « Cancelled by registered letter »). |
@@ -56,33 +56,39 @@ Each period is one stretch the user was subscribed: `start`, the first day paid,
 
 - The periods are in the order of their `start`, each one starts after the end of the previous one, and only the last may have no `end`; a `start` is never after its `end`. A list that breaks one of these rules makes the subscription unreadable.
 - The subscription is **active** while its last period has no `end`; **ending** while its last `end` is today or later (cancelled, but paid until that day); **ended** once it's past. This is computed, never written in the file, so that the dates and a status can't contradict each other.
-- A free trial is entered as a subscription whose period starts on its first paid day: its first deadline comes before that day. Trials have no field of their own (owner, 2026-11-19; backlog).
+- A free trial is entered as a subscription whose period starts on its first paid day: that day is its first renewal, and its reminders come before it. Trials have no field of their own (owner, 2026-11-19; backlog).
 - A subscription whose start isn't known any more takes any past renewal as its `start`.
 
-## Deadlines
+## Renewals
 
-The deadline of a subscription is the last day it can be cancelled without paying the next period. Every date is a calendar day of the computer's time zone, without hours: « today » is the date on the computer's clock. Only an active subscription has a deadline: one that is ending or ended renews no more.
+The renewals are the days the money leaves: the list, the reminders and the calendar export are built on them. Every date is a calendar day of the computer's time zone, without hours: « today » is the date on the computer's clock. Only an active subscription renews: one that is ending or ended renews no more.
 
 - **Renewals**: counted from the `start` of the current period, by whole periods: 7 days for weekly; 1, 3 or 12 months for monthly, quarterly and yearly. The `start` itself is the first payment. A month counted from a day it doesn't have gives its last day, each renewal counted from the `start` itself, never from the previous one: a monthly subscription from 31 January renews on 28 February (29 in a leap year), then on 31 March. A yearly one from 29 February renews on 28 February of the years without it.
 - **Next renewal**: the first renewal that is today or later; the `start` itself while it is still to come.
-- **Deadline**: the next renewal minus `notice_days`. When that day is already past (today is inside the notice), this renewal can no longer be avoided: the window says so, and the deadline is the one of the following renewal.
-- **Commitment**: until the `commitment_end` of the current period, the deadline is the one of the first renewal on or after it.
+- **Last day to cancel** a renewal: the renewal minus `notice_days`. A renewal before the `commitment_end` of the current period can't be cancelled at all. The window shows the last day to cancel in the form of a subscription that has a notice or a commitment, never in the list: the next renewal that can still be cancelled, and, when today is inside the notice, that the next renewal can no longer be avoided.
+- **Reminders**: each renewal has its reminders, the days given by `reminders_days` (the subscription's, or the settings') counted back from the renewal. When the subscription has a notice, they count back from the last day to cancel instead, so that they come while the renewal can still be cancelled; a renewal under a commitment counts them from the renewal itself, since it can't be cancelled. Each day is fixed by the renewal and the data alone, never by today: a reminder whose day is past isn't moved.
 
 The monthly cost of a subscription is its price brought to a month: weekly × 52 ÷ 12, monthly as it is, quarterly ÷ 3, yearly ÷ 12, rounded to the cent, half up, only when shown. The totals add the active subscriptions of each currency apart, without converting one currency into another.
 
 ```text
-Monthly from 2026-01-31, today 2026-02-10, notice 0          → next renewal 2026-02-28, deadline 2026-02-28
-Monthly from 2026-01-31, today 2026-03-01, notice 0          → next renewal 2026-03-31
+Monthly from 2026-01-31, today 2026-02-10                   → next renewal 2026-02-28
+Monthly from 2026-01-31, today 2026-03-01                   → next renewal 2026-03-31
 Yearly from 2024-02-29, today 2025-01-10                     → next renewal 2025-02-28
-Yearly from 2026-03-16, notice 30, today 2026-11-19          → next renewal 2027-03-16, deadline 2027-02-14
-Monthly from 2026-10-03, notice 7, today 2026-11-28          → 2026-12-03 can't be avoided; deadline 2026-12-27
+Monthly from 2026-10-21, reminders [7, 1]                    → renews on 2026-11-21; reminders on 2026-11-14 and 2026-11-20
+Yearly from 2026-03-16, notice 30, reminders [7, 1],
+  today 2026-11-19                                           → renews on 2027-03-16; last day to cancel 2027-02-14;
+                                                               reminders on 2027-02-07 and 2027-02-13
+Monthly from 2026-10-03, notice 7, today 2026-11-28          → renews on 2026-12-03, which can't be avoided;
+                                                               the next that can, 2027-01-03, by 2026-12-27
 Monthly from 2026-11-28 (a trial until then), notice 1,
-  today 2026-11-19                                           → next renewal 2026-11-28, deadline 2026-11-27
+  today 2026-11-19                                           → next renewal 2026-11-28, last day to cancel 2026-11-27
 Two periods: 2025-03-10 to 2025-04-09, then monthly from
   2026-11-01, today 2026-11-19                               → renewals from 2026-11-01: next 2026-12-01
-Commitment until 2027-06-30, monthly from 2026-07-15         → deadline 2027-07-15 minus the notice
-Last period ends 2026-12-02, today 2026-11-19                → ending: no deadline, « Ends on 2 December »
-Last period ended 2026-04-09                                 → ended: no deadline
+Monthly from 2026-07-15, commitment until 2027-06-30,
+  notice 0, reminders [7]                                    → each renewal until 2027-06-15 reminded on its renewal
+                                                               minus 7 days; the first that can be cancelled is 2027-07-15
+Last period ends 2026-12-02, today 2026-11-19                → ending: no renewal, « Ends on 2 December »
+Last period ended 2026-04-09                                 → ended: no renewal
 Two periods that overlap                                     → unreadable: « Its periods overlap »
 category = "insurrance"                                      → unreadable: « insurrance isn't a category »
 Yearly at 186.00 EUR                                         → 15.50 EUR a month
@@ -104,19 +110,22 @@ The reminders come from a check the system runs every day, without a window: the
 ### What a check does
 
 1. Reads the settings and the subscriptions. It never writes the data file: only the window does.
-2. Computes the deadline of each subscription (see [Deadlines](#deadlines)), and the reminders due: the day of a reminder is the deadline minus one of its `reminders_days`.
-3. Sends a notification for each reminder due today, and for each reminder missed since the last check (the computer off that day) while its deadline isn't past. Each reminder is sent once only; when several reminders of the same deadline were missed, only the latest is sent.
+2. Computes the next renewal of each active subscription and the days of its reminders (see [Renewals](#renewals)).
+3. Sends a notification for each reminder due today, and for each reminder missed since the last check (the computer off that day) while the day it counts from (the renewal, or the last day to cancel) isn't past. Each reminder is sent once only; when several reminders of the same renewal were missed, only the latest is sent.
 4. Writes what it did to its log, then exits.
 
-A notification names the subscription and its deadline, in the language of the settings, for example « Netflix: cancel by Wednesday 3 December (in 7 days) », or « Home insurance: today is the last day to cancel ». More than three notifications at once give way to a single one: « 5 subscriptions to cancel soon: open Subscriptions Tracker ». A click on a notification does nothing in version 1 (opening the window from it waits in the backlog).
+A notification names the subscription, its renewal and its price, in the language of the settings, for example « Netflix renews in 7 days, on Thursday 3 December: €13.49 », or « Netflix renews today: €13.49 ». With a notice, it gives the last day to cancel too: « Home insurance renews on 16 March 2027 (€186.00): to cancel it, by Sunday 14 February (in 7 days) », or « Home insurance: today is the last day to cancel before it renews on 16 March 2027 (€186.00) ». More than three notifications at once give way to a single one: « 5 subscriptions renew soon: open Subscriptions Tracker ». A click on a notification does nothing in version 1 (opening the window from it waits in the backlog).
 
 ```text
-Deadline 2026-12-03, reminders [7, 1], check on 2026-11-26   → « in 7 days », remembered
+Renewal 2026-12-03, reminders [7, 1], check on 2026-11-26    → « renews in 7 days », remembered
 Same, second check on 2026-11-26 (a second login)            → nothing
 Same, the computer off from 2026-11-25 to 2026-12-02         → on 2026-12-02, « in 1 day » only
 Same, the computer off from 2026-11-25 to 2026-11-28         → on 2026-11-28, « in 5 days »
-Same, the computer off until 2026-12-04                      → nothing: the deadline is past
-Reminder 0 in the list, check on the deadline                → « today is the last day »
+Same, the computer off until 2026-12-04                      → nothing: the renewal is past
+Reminder 0 in the list, check on the renewal                 → « renews today »
+Notice 30, renewal 2027-03-16, reminders [7, 1], check on
+  2027-02-07                                                 → « to cancel it, by Sunday 14 February (in 7 days) »
+Same, the computer off from 2027-02-06 to 2027-02-15         → nothing: the last day to cancel is past
 The subscription renamed after a reminder                    → the reminder isn't sent again (same id)
 Four reminders due on the same day                           → one notification for the four
 A subscription ending or ended                               → nothing
@@ -129,9 +138,9 @@ The window and a check can run at the same time: they never write the same file 
 
 ## Design principles
 
-- **One look tells what to cancel soon**: the window is opened now and then, for a minute. The nearest deadline comes first, and what needs an action stands out; the rest stays quiet.
-- **Plain words**: short sentences that say what happened and what to do, without jargon (« deadline », not « termination date »). French addresses the user with « vous » (owner, 2026-11-19): a tool of money and paperwork, for a wide public.
-- **Colors that help, never alone**: a deadline whose first reminder has come is **soon**, one that is today is **urgent**, each with a color of its own; the text says the same (« in 3 days », « today »), for a user who doesn't see the color.
+- **One look tells what renews soon**: the window is opened now and then, for a minute. The nearest renewal comes first, and what renews soon stands out; the rest stays quiet.
+- **Plain words**: short sentences that say what happened and what to do, without jargon (« renews », « last day to cancel », not « termination date »). French addresses the user with « vous » (owner, 2026-11-19): a tool of money and paperwork, for a wide public.
+- **Colors that help, never alone**: a renewal whose first reminder has come is **soon**, one that is today is **today**, each with a color of its own; the text says the same (« in 3 days », « Today »), for a user who doesn't see the color.
 - **Nothing hidden**: what the application installs on the system (the daily check) is said in the window, with how to remove it; nothing leaves the computer.
 - The interface never names a competitor, not even in a help text.
 
@@ -140,8 +149,8 @@ The window and a check can run at the same time: they never write the same file 
 - **Window**: 720 × 560 points by default, 480 × 400 at the smallest, and it can be resized; it can't be made smaller than its smallest size. Its size and position are kept from one launch to the next (`window.ron`), and a window that would open off the screens is brought back on one.
 - **Title bar**: the one of the system.
 - **Keyboard**: Tab and Shift+Tab move between the controls, Enter opens the subscription chosen in the list; Ctrl+N adds a subscription, Ctrl+S saves the open form; Escape closes the open form or panel, asking first when a form has changes. No global hotkey: the application isn't used over another program.
-- **Language**: the language of the system until the user picks one in the settings, and English when the system's language isn't translated. The dates are written per language (« Wednesday 3 December 2026 », « mercredi 3 décembre 2026 »), and so are the amounts, with the symbol of their currency (« €13.49 », « 13,49 € »; « CA$13.49 », « 13,49 $ CA »; « 1,049.00 », « 1 049,00 »). French is the longest language, drawn in the wireframes and the mock-up.
-- **Theme**: the theme of the system, light or dark, until the user picks one in the settings; the colors of « soon » and « urgent » keep their meaning in both.
+- **Language**: the language of the system until the user picks one in the settings, and English when the system's language isn't translated. The dates are written per language (« Wednesday 3 December 2026 », « mercredi 3 décembre 2026 »), and so are the amounts, with the symbol of their currency (« €13.49 », « 13,49 € »; « CA$13.49 », « 13,49 $ CA »; « 1,049.00 », « 1 049,00 »). English, the reference language, is drawn in the wireframes and shown first in the mock-up (owner, 2026-11-19); French, the longest, is checked wherever a text may not fit.
+- **Theme**: the theme of the system, light or dark, until the user picks one in the settings; the colors of « soon » and « today » keep their meaning in both.
 - **Feedback**: every file is local and small, so the window shows no wait, except while it installs the daily check (« Turning the reminders on… »). Every error is shown in the window, with what happened and what to do, never in the log only (see [Error handling](#error-handling)). Nothing typed is lost: closing the window while a form has changes asks to save them, to drop them or to go back.
 - **Files**: in the folders of each system (see [Local files](#local-files)), each one written atomically.
 - **Instances**: a second launch opens a second window. Each window reads the data file again before each save and when it gets the focus back, and applies its change to what it read then, so that two windows, or a window and an edit by hand, never erase each other's changes (see [Windows](#windows)). Bringing the first window forward instead would need the two processes to talk to each other and a window raised on X11: much more code for a rare case.
@@ -152,32 +161,42 @@ The window and a check can run at the same time: they never write the same file 
 
 ## Windows
 
-What each screen shows and does. Where each one sits (a window of its own, a panel of the main window) is decided by the structure (step 2), then drawn in the wireframes.
+One window holds every screen, as drawn in [docs/wireframes/main-window.excalidraw](docs/wireframes/main-window.excalidraw): the structure the owner chose on 2026-11-19, from eight variants kept in the history of that file. No screen opens a window of its own.
+
+- **The list** fills the window: the totals at the top, with « + Add », « Export .ics » and the settings (⚙); under them, the notices (an unreadable subscription, the reminders off or not turned on); then three tabs over a table, **Active**, **Ending** and **Ended**, each with its count. A click on a row, or Enter, opens its form.
+- **The form of a subscription** takes the place of the table at the default size, with « ← Back »; in a wide window, it opens beside the table, which keeps its name and date columns. The totals and the tabs stay in view. The width where it switches is decided by the wireframes.
+- **The settings** open over the window from ⚙, and close with ✕ or Escape; **About** is their last section.
+- **The calendar export** opens a small dialog over the window, which says what the file is and how to use it, then shows its path and « Open the folder ».
+- **The confirmations** (a deletion, the changes not saved, a subscription changed outside the window) are small dialogs over the window.
+- **The first launch**, with no subscription: no totals and no tabs, « No subscription yet » and « + Add a subscription », under the notice that the reminders are on, shown once.
+
+What each screen shows and does:
 
 ### The list
 
 The main window: the subscriptions and what they cost.
 
 - **Totals**, at the top: the cost of the active subscriptions a month and a year, each currency apart (« €28.99 a month · €347.88 a year »). The cost of a year is the price brought to a year (weekly × 52, monthly × 12, quarterly × 4, yearly as it is), rounded to the cent, half up, only when shown.
-- **Active**: sorted by deadline, the nearest first, then by name. Each row shows the name, the category, the price and its period (« €13.49 / month »), the monthly cost when the period isn't a month, and the deadline: « Cancel by Wednesday 3 December (in 7 days) », marked **soon** or **urgent** (see [Design principles](#design-principles)). While a commitment runs: « Committed until 30 June 2027 · cancel by 15 July 2027 ». When the next renewal can no longer be avoided: « Renews on 3 December: too late to cancel this one · then cancel by 27 December ».
+- **Active**: sorted by the next renewal, the nearest first, then by name. Each row shows the name, the category, the price and its period (« €13.49 / month »), its cost a month, and the next renewal: « Sat 21 Nov · in 2 days », « Today », marked **soon** or **today** (see [Design principles](#design-principles)). The last day to cancel and the commitment are shown in the form only (see [Renewals](#renewals)).
 - **Ending**: « Ends on Tuesday 2 December », the nearest first. They count in no total: they renew no more.
-- **Ended**: kept visible, apart from the others, as the history of the user's subscriptions: « Ended on 9 April 2026 », the most recent first. A folded group or a history section of their own: decided by the structure.
-- **Unreadable**: shown before the others, each with its `id` (or its place in the file when it has none), the field and the reason, and two buttons, « Open the file » (in the text editor of the system) and « Reload ». While one of them is there, the window saves nothing (see [Local files](#local-files)): adding and changing a subscription are turned off, with the reason said.
+- **Ended**: kept, in a tab of their own, as the history of the user's subscriptions: « Ended on 9 April 2026 », the most recent first.
+- **Unreadable**: shown in the notices, above the tabs, each with its `id` (or its place in the file when it has none), the field and the reason, and two buttons, « Open the file » (in the text editor of the system) and « Reload ». While one of them is there, the window saves nothing (see [Local files](#local-files)): adding and changing a subscription are turned off, with the reason said.
 - **Empty**: « No subscription yet », and a button to add the first one.
 - When the daily check is off, a line says « Reminders are off », with a link to the settings.
 - The window reads the data file again when it gets the focus back, so that an edit by hand or in another window shows at once.
 
 ```text
 No data file                                         → « No subscription yet » and « Add a subscription »
-Three active subscriptions                           → sorted by deadline, the nearest first
-A deadline in 2 days, reminders [7, 1]               → soon, « in 2 days »
-A deadline today                                     → urgent, « Today is the last day to cancel »
-The next renewal can no longer be avoided            → « too late to cancel this one », and the deadline after it
+Three active subscriptions                           → sorted by the next renewal, the nearest first
+A renewal in 2 days, reminders [7, 1]                → soon, « in 2 days »
+A renewal today                                      → today, « Today »
+A renewal in 40 days, notice 30, reminders [14]      → soon: its first reminder came 4 days ago
+Home insurance, notice 30                            → the renewal in the list; the last day to cancel in its form
 Netflix €13.49 monthly, home insurance €186.00
   yearly, Spotify $10.99 monthly                     → « €28.99 a month · €347.88 a year », « $10.99 a month · $131.88 a year »
 A subscription ending on 2 December                  → under Ending, counted in no total
 A subscription ended on 9 April 2026                 → in the history, counted in no total
-One subscription can't be read                       → shown first with its field and reason; the others shown; adding and changing turned off, with the reason
+One subscription can't be read                       → in the notices with its field and reason; the others shown; adding and changing turned off, with the reason
 The data file changed by hand, the window open       → read again when the window gets the focus back
 ```
 
@@ -186,10 +205,10 @@ The data file changed by hand, the window open       → read again when the win
 Opened from the list on a subscription, or empty to add one.
 
 - Every field of the subscription (see [Subscriptions](#subscriptions)), the category, the currency and the period chosen from their lists, translated; a date is entered with a control chosen at the mock-up, which accepts real days only. Its periods are listed, the current one first; « Add a past period » records one more.
-- What is computed is shown next to the fields, never entered: the status, the next renewal, the deadline, the monthly and yearly costs, the coming reminders.
+- What is computed is shown next to the fields, never entered: the status, the next renewal, the last day to cancel when there is a notice or a commitment (and, inside the notice, that the next renewal can no longer be avoided), the monthly and yearly costs, the coming reminders.
 - **Save** checks every rule at once, shows each error next to its field, and writes nothing while one is left. It writes only this subscription, keeping the comments, the order and the fields this version doesn't know.
 - A new subscription starts monthly, from today, in the category `other`, with no notice and the reminders of the settings, in the currency most used in the file, or, in an empty file, the currency of the system's region (`USD` in the United States, `GBP` in the United Kingdom, `CHF` in Switzerland, `CAD` in Canada, `EUR` elsewhere). Its `id` is made from its name, in lowercase letters, digits and dashes (« Home insurance » gives `home-insurance`, then `home-insurance-2` when it's taken), and never changes after.
-- **I cancelled it**, on an active subscription: asks the last day paid, proposing the day before the renewal of the deadline shown, and writes it as the `end` of the current period. **Undo the cancellation**, on an ending one, removes that `end`. **Subscribe again**, on an ended one, adds a period that starts today (the day can be changed).
+- **I cancelled it**, on an active subscription: asks the last day paid, proposing the day before the next renewal that can still be cancelled, and writes it as the `end` of the current period. **Undo the cancellation**, on an ending one, removes that `end`. **Subscribe again**, on an ended one, adds a period that starts today (the day can be changed).
 - **Open the cancellation page**, when the subscription has a `cancel_url`: opens it in the browser of the system.
 - **Delete**: asks first (« Delete Netflix and its history? This can't be undone. »), then removes the subscription from the file. « I cancelled it » keeps the history instead, and the confirmation says so.
 - Closing the form, or the window, while it has changes asks to save them, to drop them or to go back.
@@ -211,18 +230,19 @@ Spotify changed by hand while the form of Netflix is open       → Netflix save
 
 ### The calendar export
 
-Brings the deadlines into a calendar (a phone's, an online one) without a server: the user imports the file into it.
+Brings the renewals into a calendar (a phone's, an online one) without a server: the user imports the file into it.
 
-- « Export to a calendar » writes `subscriptions-deadlines.ics` in the user's downloads folder (their home folder when the system has none), replacing the previous export, then shows its path and « Open the folder ».
-- For each active subscription, every deadline from today to the same day a year later, excluded, computed like the next one (see [Deadlines](#deadlines)): an event of the whole day « Cancel Netflix », with the price and the cancellation page in its description, and an alarm at 9:00 on the day of each of its reminders.
+- « Export » in the dialog of « Export .ics » writes `subscriptions-renewals.ics` in the user's downloads folder (their home folder when the system has none), replacing the previous export, then shows its path and « Open the folder ».
+- For each active subscription, every renewal from today to the same day a year later, excluded, computed like the next one (see [Renewals](#renewals)): an event of the whole day « Netflix renews · €13.49 », with the price, the last day to cancel when there is a notice, and the cancellation page in its description, and an alarm at 9:00 on the day of each of its reminders.
 - Each event keeps the same identifier from one export to the next (the `id` of the subscription and the date), so that a calendar that imports the file again can update its events rather than doubling them; whether it does depends on the calendar.
 - The file doesn't update itself: the notice says to export again after a change. The subscriptions ending, ended or unreadable are left out, the unreadable ones with a word (« 1 subscription left out: it can't be read »).
 
 ```text
-One monthly subscription, the deadline on the 3rd            → 12 events, one on the 3rd of each month (or the last day of a shorter month)
+One monthly subscription, renewed on the 3rd                → 12 events, one on the 3rd of each month (or the last day of a shorter month)
 One weekly subscription                                       → 52 or 53 events, one a week
-Reminders [7, 1] on a deadline                                → two alarms, at 9:00, 7 days and 1 day before
-No active subscription                                        → the export turned off: « No deadline to export »
+Reminders [7, 1], no notice                                   → two alarms, at 9:00, 7 days and 1 day before the renewal
+Reminders [7, 1], notice 30                                   → two alarms, 7 days and 1 day before the last day to cancel
+No active subscription                                        → the export turned off: « No renewal to export »
 The downloads folder can't be written                         → nothing written; the reason and the path said
 ```
 
@@ -246,9 +266,9 @@ The settings are saved in `settings.toml` (see [Local files](#local-files)) as s
 | `language` | The language of the window and of the notifications: `system`, `en` or `fr`. | `system` |
 | `theme` | The theme of the window: `system`, `light` or `dark`. | `system` |
 | `daily_check` | Whether the system runs the daily check (see [Installation](#installation)): turning it off removes the timer or the task, turning it on installs it again. | `true` |
-| `reminders_days` | When to be warned, in days before the deadline, for the subscriptions that have no `reminders_days` of their own. | `[7, 1]` |
+| `reminders_days` | When to be warned, in days before the renewal (before the last day to cancel when there is a notice), for the subscriptions that have no `reminders_days` of their own. | `[7, 1]` |
 
-- A list of reminders, in the settings or in a subscription, holds whole numbers from 0 (the day of the deadline) to 365, at most five, written « 7, 1 » in the window; it is kept sorted from the largest, without duplicates. An empty list means no reminder.
+- A list of reminders, in the settings or in a subscription, holds whole numbers from 0 (the day itself) to 365, at most five, written « 7, 1 » in the window; it is kept sorted from the largest, without duplicates. An empty list means no reminder.
 - The hour of the check stays 9:00 in version 1 (a setting waits in the backlog).
 - The file also keeps what the window has already said once (`reminders_notice_shown`, the notice that the reminders are on), which is not shown as a setting.
 - A value this version can't read takes its default, without losing the others; a file that isn't TOML is kept aside as `settings.invalid.toml` before the defaults replace it, and the window says so once.
@@ -277,7 +297,7 @@ None of them is tracked by Git: they belong to the user. Every file the applicat
 | `settings.toml` | The settings | The window | `~/.config/subscriptions-tracker/` | `%APPDATA%\subscriptions-tracker\config\` |
 | `window.ron` | The size and position of the window (eframe) | The window | Same | Same |
 | `subscriptions.toml` | The subscriptions | The window, or the user by hand | `~/.local/share/subscriptions-tracker/` | `%APPDATA%\subscriptions-tracker\data\` |
-| `reminders.toml` | The reminders already sent, by `id`, deadline and day; a reminder of a past deadline is dropped | The check | `~/.local/share/subscriptions-tracker/` | `%LOCALAPPDATA%\subscriptions-tracker\data\` |
+| `reminders.toml` | The reminders already sent, by `id`, renewal and day; a reminder of a past renewal is dropped | The check | `~/.local/share/subscriptions-tracker/` | `%LOCALAPPDATA%\subscriptions-tracker\data\` |
 | `log.txt` | The log of the window, written again at each launch | The window | `~/.local/share/subscriptions-tracker/` | `%LOCALAPPDATA%\subscriptions-tracker\data\` |
 | `check-log.txt` | The log of the checks, added to at each check and cut to its last 500 lines, so that it never grows and the window never erases it | The check | Same as `log.txt` | Same as `log.txt` |
 | `subscriptions-tracker-check.service`, `.timer` | The daily check | The window | `~/.config/systemd/user/` | A task « Subscriptions Tracker check » of the Task Scheduler, at its root |
@@ -297,7 +317,7 @@ The data file can be edited by hand, like [its example](docs/subscriptions-examp
 | The daily check can't be installed (no `systemctl`, no user session, the Task Scheduler refusing) | A notice in the window: « The reminders couldn't be turned on », the reason, and « Try again »; the setting stays on, and each launch tries again. |
 | The daily check can't be removed | The settings say so, with the files or the task to remove by hand. |
 | `reminders.toml` isn't TOML | Kept aside as `reminders.invalid.toml`, and the check starts again from an empty file, which it writes to its log: a reminder sent earlier the same day may come again, a risk accepted rather than a reminder lost. |
-| A notification can't be sent (no notification service) | Written to the log of the check, and not remembered as sent: the next check tries again while its deadline isn't past. |
+| A notification can't be sent (no notification service) | Written to the log of the check, and not remembered as sent: the next check tries again while the day it counts from isn't past. |
 | `reminders.toml` can't be written | Written to the log of the check: the reminders of the day may come again at the next check. |
 | A log can't be written | The application goes on without it. |
 | The browser or the file manager can't be opened | The address or the path is shown, to copy. |

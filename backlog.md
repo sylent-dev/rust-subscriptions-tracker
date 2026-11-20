@@ -38,6 +38,10 @@ One entry per item, in the section of its kind: what it is in one sentence, what
 
 - A second launch that brings the first window forward rather than opening a second one. Waits on: users who ask for it. Noted on 2026-11-19 (step 1b).
 
+- Fixed expenses (the rent, the energy): a recurring expense with no deadline nor reminder, counted in the totals (perhaps in a total of its own, since the rent outweighs everything else), and a `housing` category. Changes the data format. Waits on: the first release. Noted on 2026-11-19 (step 2, the sample data of the wireframes).
+
+- Import a data file dropped on the window: on the empty list, imported once checked; on a full list, replacing it after a confirmation, the previous file kept aside; nothing written while an error is left (a file that isn't text, such as a PNG; not TOML, with its line; a subscription with a field wrong; several files, a folder, more than 1 MB). Perhaps an « Import a file… » button too, for the keyboard (a file dialog, the `rfd` crate). Waits on: a probe of a drop from Dolphin through XWayland on KDE Plasma, since winit 0.30 receives dropped files on X11 and Windows but not on Wayland. Noted on 2026-11-19 (step 2).
+
 - macOS support: its own scheduler (launchd) and desktop notifications, and its archives in the Release workflow (its targets in `release.yml`, `deny.toml` and `about.toml`, as in rust-desktop-template; its Clippy job already runs in the CI). Waits on: a Mac to test the reminders. Noted on 2026-11-14.
 
 ## Large works
